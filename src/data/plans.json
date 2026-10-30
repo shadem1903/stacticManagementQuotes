@@ -1,0 +1,68 @@
+{
+  "$comment": "Planes para Cumplido Salud y Cumplido Belleza (los mismos niveles; la cotización se hace para el software elegido). price: null => 'Cotización personalizada'. No publicar precios no aprobados.",
+  "currency": "COP",
+  "billingPeriod": "mensual",
+  "taxesNote": "Los valores finales, el IVA y otros cargos aplicables se detallan en la cotización antes de contratar.",
+  "purchaseEnabled": false,
+  "validFrom": null,
+  "plans": [
+    {
+      "id": "basico",
+      "name": "Básico",
+      "summary": "Para consultorios y salones pequeños que empiezan a ordenar su agenda y sus cuentas.",
+      "price": null,
+      "users": {
+        "min": 1,
+        "max": 5
+      },
+      "modules": [
+        "Módulos esenciales de tu software (el detalle se confirma en la cotización)",
+        "Administración y contabilidad incluidas"
+      ],
+      "support": "Soporte estándar",
+      "highlight": false
+    },
+    {
+      "id": "profesional",
+      "name": "Profesional",
+      "summary": "Para equipos con varios profesionales que necesitan todos los módulos.",
+      "price": null,
+      "users": {
+        "min": 6,
+        "max": 15
+      },
+      "modules": [
+        "Todos los módulos de tu software",
+        "Administración y contabilidad incluidas"
+      ],
+      "support": "Soporte prioritario",
+      "highlight": true
+    },
+    {
+      "id": "empresarial",
+      "name": "Empresarial",
+      "summary": "Para operaciones grandes que necesitan reportes avanzados.",
+      "price": null,
+      "users": {
+        "min": 16,
+        "max": null
+      },
+      "modules": [
+        "Todos los módulos de tu software",
+        "Administración y contabilidad incluidas",
+        "Reportes avanzados"
+      ],
+      "support": "Soporte extendido (horario por definir)",
+      "highlight": false
+    }
+  ],
+  "commonTerms": [
+    "La suscripción es mensual, por software (Cumplido Salud o Cumplido Belleza), y define el número de usuarios y los módulos habilitados.",
+    "Las condiciones de renovación, cancelación y reembolso se encuentran en los documentos legales y se entregan con la cotización.",
+    "Esta página es informativa: no permite comprar ni realizar pagos en línea."
+  ],
+  "products": [
+    "salud",
+    "belleza"
+  ]
+}

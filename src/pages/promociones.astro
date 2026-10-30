@@ -1,0 +1,95 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import Icon from '../components/Icon.astro';
+import CtaBand from '../components/CtaBand.astro';
+import data from '../data/promotions.json';
+import plans from '../data/plans.json';
+import { activePromotions, discountPercent, formatMoney, formatDateTime, type Promotion } from '../lib/promotions';
+
+const promos = activePromotions(data.promotions as Promotion[]);
+const planName = (id: string) => plans.plans.find((p) => p.id === id)?.name ?? id;
+---
+<Base title="Promociones" description="Promociones vigentes con sus condiciones, vigencia, requisitos y restricciones.">
+  <PageHero
+    title="Promociones"
+    lead="Solo publicamos promociones vigentes, con su fecha de inicio y fin, a quién aplican y cómo obtenerlas."
+    crumbs={[{ href: '/promociones', label: 'Promociones' }]}
+  />
+
+  <section class="section">
+    <div class="wrap">
+      {promos.length === 0 ? (
+        <div class="empty">
+          <span class="empty-ico"><Icon name="Tag" /></span>
+          <h2>No hay promociones vigentes</h2>
+          <p>Cuando lancemos una, la verás aquí con todas sus condiciones. Si quieres conocer los planes disponibles, pide una cotización.</p>
+          <div class="actions">
+            <a class="btn" href="/contacto?motivo=planes">Pedir cotización</a>
+            <a class="btn btn--ghost" href="/legal/promociones">Términos de promociones</a>
+          </div>
+        </div>
+      ) : (
+        <div class="promos" data-promos>
+          {promos.map((p) => {
+            const pct = discountPercent(p.originalPrice, p.promoPrice);
+            return (
+              <article class="promo" data-ends-at={p.endsAt} aria-labelledby={`p-${p.id}`}>
+                <header>
+                  <h2 id={`p-${p.id}`}>{p.name}</h2>
+                  {pct != null && <span class="pct">{pct}% de descuento</span>}
+                </header>
+                <p>{p.description}</p>
+                {p.promoPrice != null && (
+                  <p class="prices">
+                    <b>{formatMoney(p.promoPrice, p.currency)}</b>
+                    {p.originalPrice != null && <s aria-label={`Precio de referencia ${formatMoney(p.originalPrice, p.currency)}`}>{formatMoney(p.originalPrice, p.currency)}</s>}
+                  </p>
+                )}
+                <dl>
+                  <div><dt>Vigencia</dt><dd>Del {formatDateTime(p.startsAt, p.timeZone)} al {formatDateTime(p.endsAt, p.timeZone)} (hora de {p.timeZone.replace('America/', '')})</dd></div>
+                  <div><dt>Aplica a</dt><dd>{p.appliesTo.map(planName).join(', ')}</dd></div>
+                  {p.eligibility.length > 0 && <div><dt>Requisitos</dt><dd><ul>{p.eligibility.map((x) => <li>{x}</li>)}</ul></dd></div>}
+                  {p.restrictions.length > 0 && <div><dt>Restricciones</dt><dd><ul>{p.restrictions.map((x) => <li>{x}</li>)}</ul></dd></div>}
+                  {p.quota != null && <div><dt>Cupos</dt><dd>{p.quota}</dd></div>}
+                  <div><dt>Cómo obtenerla</dt><dd>{p.howToRedeem}</dd></div>
+                </dl>
+                <p class="small"><a href="/legal/promociones">Términos de promociones (versión {p.termsVersion})</a></p>
+              </article>
+            );
+          })}
+        </div>
+      )}
+      <p class="expired-msg" hidden data-expired>La promoción que estaba publicada terminó. <a href="/contacto?motivo=planes">Pide una cotización</a>.</p>
+    </div>
+  </section>
+  <CtaBand />
+</Base>
+<style>
+  .empty { max-width: 620px; margin-inline: auto; text-align: center; padding: var(--s-12) var(--s-6); border: 1px dashed var(--line-strong); border-radius: var(--r-xl); background: var(--surface); }
+  .empty-ico { display: inline-grid; place-items: center; width: 56px; height: 56px; border-radius: 16px; background: var(--c-brand-soft); color: var(--c-brand); margin-bottom: var(--s-5); }
+  .empty h2 { font-size: var(--t-xl); }
+  .empty p { color: var(--ink-2); }
+  .actions { display: flex; gap: var(--s-3); justify-content: center; flex-wrap: wrap; margin-top: var(--s-6); }
+  .promos { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: var(--s-5); }
+  .promo { padding: var(--s-8); background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-lg); }
+  .promo header { display: flex; justify-content: space-between; gap: var(--s-4); align-items: flex-start; }
+  .promo h2 { font-size: var(--t-lg); }
+  .pct { flex: none; font-weight: 700; font-size: var(--t-sm); color: var(--c-beauty-ink); background: color-mix(in srgb, var(--c-beauty) 10%, transparent); padding: 4px 10px; border-radius: 999px; }
+  .prices { display: flex; gap: var(--s-3); align-items: baseline; }
+  .prices b { font-size: var(--t-xl); }
+  .prices s { color: var(--ink-3); }
+  dl div { padding: var(--s-3) 0; border-top: 1px solid var(--line); }
+  dt { font-weight: 600; font-size: var(--t-sm); }
+  dd { margin: 2px 0 0; color: var(--ink-2); font-size: var(--t-sm); }
+  dd ul { padding-left: 1.1em; }
+</style>
+<script>
+  // El sitio es estático: si una promoción vence entre compilaciones, se oculta en el navegador.
+  const now = Date.now();
+  let removed = 0;
+  document.querySelectorAll<HTMLElement>('[data-ends-at]').forEach((el) => {
+    if (Date.parse(el.dataset.endsAt!) <= now) { el.remove(); removed++; }
+  });
+  if (removed && !document.querySelector('[data-ends-at]')) (document.querySelector('[data-expired]') as HTMLElement).hidden = false;
+</script>

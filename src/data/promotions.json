@@ -1,0 +1,4 @@
+{
+  "$comment": "Promociones. Solo se publican las válidas y vigentes en el momento de compilar el sitio (vuelve a compilar al iniciar o terminar una promoción). Fechas ISO con zona horaria. Ver docs/CONTENIDO.md para el formato. No inventar precios anteriores, cupos ni fechas.",
+  "promotions": []
+}

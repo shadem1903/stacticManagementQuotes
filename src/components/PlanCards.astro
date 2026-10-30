@@ -1,0 +1,50 @@
+---
+import Icon from './Icon.astro';
+import data from '../data/plans.json';
+import { formatMoney } from '../lib/promotions';
+
+interface Props { detailed?: boolean; product?: 'salud' | 'belleza' }
+const { detailed = false, product } = Astro.props;
+const usersLabel = (u: { min: number; max: number | null }) => (u.max ? `${u.min} a ${u.max} usuarios` : `${u.min} usuarios o más`);
+---
+<div class="plans">
+  {data.plans.map((p) => (
+    <article class:list={['plan', { hl: p.highlight }]} aria-labelledby={`plan-${p.id}`}>
+      <header>
+        <h3 id={`plan-${p.id}`}>{p.name}</h3>
+        <p class="sum">{p.summary}</p>
+      </header>
+      <p class="price">
+        {p.price != null ? (
+          <><b>{formatMoney(p.price, data.currency as 'COP')}</b><span> / {data.billingPeriod}</span></>
+        ) : (
+          <><b class="quote">Cotización personalizada</b><span>Suscripción {data.billingPeriod}</span></>
+        )}
+      </p>
+      <ul class="feat">
+        <li><Icon name="Users" /><span><strong>{usersLabel(p.users)}</strong></span></li>
+        {p.modules.map((m) => <li><Icon name="Check" /><span>{m}</span></li>)}
+        <li><Icon name="LifeBuoy" /><span>{p.support}</span></li>
+      </ul>
+      <a class:list={['btn', { 'btn--ghost': !p.highlight }]} href={`/contacto?motivo=planes&plan=${p.id}${product ? `&producto=${product}` : ''}`}>Cotizar plan {p.name}</a>
+    </article>
+  ))}
+</div>
+{detailed && <p class="small muted taxes">{data.taxesNote}</p>}
+<style>
+  .plans { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--s-5); align-items: stretch; }
+  .plan { display: flex; flex-direction: column; gap: var(--s-5); padding: var(--s-8) var(--s-6); background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-lg); }
+  .plan.hl { border-color: var(--c-brand); box-shadow: 0 0 0 1px var(--c-brand), var(--shadow-2); }
+  .plan h3 { font-size: var(--t-lg); margin-bottom: var(--s-2); }
+  .sum { color: var(--ink-2); font-size: var(--t-sm); margin: 0; min-height: 3em; }
+  .price { margin: 0; display: flex; flex-direction: column; gap: 2px; padding-block: var(--s-4); border-block: 1px solid var(--line); }
+  .price b { font-size: var(--t-xl); letter-spacing: -0.02em; color: var(--ink); }
+  .price b.quote { font-size: var(--t-lg); }
+  .price span { color: var(--ink-3); font-size: var(--t-sm); }
+  .feat { list-style: none; display: grid; gap: var(--s-3); font-size: var(--t-sm); color: var(--ink-2); flex: 1; }
+  .feat li { display: flex; gap: var(--s-3); align-items: flex-start; }
+  .feat :global(.ico) { width: 18px; height: 18px; color: var(--c-brand); margin-top: 2px; }
+  .feat strong { color: var(--ink); }
+  .taxes { margin-top: var(--s-5); }
+  @media (max-width: 900px) { .plans { grid-template-columns: 1fr; } .sum { min-height: 0; } }
+</style>

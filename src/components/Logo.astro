@@ -1,0 +1,26 @@
+---
+// Marca Cumplido: una "C" abierta que se completa con un check.
+// El check toma el color del producto: azul cielo (marca), turquesa (Salud), rosa (Belleza).
+interface Props { product?: 'salud' | 'belleza'; compact?: boolean; size?: number }
+const { product, compact = false, size = 38 } = Astro.props;
+const check = product === 'salud' ? '#5FE0C3' : product === 'belleza' ? '#FF7DBE' : '#8CC8FF';
+const label = product === 'salud' ? 'salud' : product === 'belleza' ? 'belleza' : null;
+---
+<span class:list={['logo', product && `logo--${product}`]}>
+  <svg class="logo-mark" viewBox="0 0 48 48" width={size} height={size} aria-hidden="true">
+    <rect width="48" height="48" rx="13" fill="#0B4A91" />
+    <path d="M32.4 16.9A11 11 0 1 0 32.4 31.1" fill="none" stroke="#fff" stroke-width="4.6" stroke-linecap="round" />
+    <path d="M18.5 24.2l4.6 4.6L37 14.6" fill="none" stroke={check} stroke-width="4.6" stroke-linecap="round" stroke-linejoin="round" />
+  </svg>
+  {!compact && (
+    <span class="logo-text">cumplido{label && <span class="logo-product">{label}</span>}</span>
+  )}
+</span>
+<style>
+  .logo { display: inline-flex; align-items: center; gap: 10px; color: var(--ink); }
+  .logo-mark { flex: none; }
+  .logo-text { font-weight: 780; letter-spacing: -0.045em; font-size: 1.5rem; line-height: 1; display: inline-flex; gap: 6px; align-items: baseline; }
+  .logo-product { font-weight: 600; letter-spacing: -0.03em; }
+  .logo--salud .logo-product { color: var(--c-health-ink); }
+  .logo--belleza .logo-product { color: var(--c-beauty-ink); }
+</style>

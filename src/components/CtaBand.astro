@@ -1,0 +1,36 @@
+---
+interface Props { title?: string; text?: string }
+const {
+  title = 'Mira Cumplido funcionando con un negocio como el tuyo',
+  text = 'Agenda una demostración de Cumplido Salud o Cumplido Belleza. Revisamos cómo trabajas hoy y te enviamos una cotización sin compromiso.',
+} = Astro.props;
+---
+<section class="cta">
+  <div class="wrap cta-in">
+    <div>
+      <h2>{title}</h2>
+      <p>{text}</p>
+    </div>
+    <div class="cta-actions">
+      <a class="btn cta-primary" href="/contacto?motivo=demo">Solicitar demostración</a>
+      <a class="btn btn--ghost cta-ghost" href="/planes">Ver planes</a>
+    </div>
+  </div>
+</section>
+<style>
+  .cta { background: #073b78; color: #fff; position: relative; overflow: hidden; }
+  .cta::after {
+    content: ''; position: absolute; inset: 0; pointer-events: none; opacity: .14;
+    background-image: linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px);
+    background-size: 64px 32px; mask-image: linear-gradient(to left, #000, transparent 70%);
+  }
+  .cta-in { position: relative; z-index: 1; display: flex; gap: var(--s-8); align-items: center; justify-content: space-between; padding-block: var(--s-16); flex-wrap: wrap; }
+  .cta h2 { color: #fff; max-width: 22ch; }
+  .cta p { color: #cfe0f6; max-width: 56ch; margin: 0; }
+  .cta-actions { display: flex; gap: var(--s-3); flex-wrap: wrap; }
+  .cta-primary { --btn-bg: #fff; --btn-ink: #073b78; }
+  .cta-primary:hover { background: #eaf4ff; }
+  .cta-ghost { --btn-ink: #fff; --btn-line: rgb(255 255 255 / 45%); }
+  .cta-ghost:hover { background: rgb(255 255 255 / 10%); border-color: #fff; }
+  .cta :focus-visible { outline-color: #fff; }
+</style>

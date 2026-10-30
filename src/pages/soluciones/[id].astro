@@ -1,0 +1,184 @@
+---
+import Base from '../../layouts/Base.astro';
+import Icon from '../../components/Icon.astro';
+import Logo from '../../components/Logo.astro';
+import Status from '../../components/Status.astro';
+import AgendaDemo from '../../components/AgendaDemo.astro';
+import PlanCards from '../../components/PlanCards.astro';
+import FaqList from '../../components/FaqList.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import { solutions, solutionList, type SolutionId } from '../../data/solutions';
+import features from '../../data/features.json';
+
+export function getStaticPaths() {
+  return solutionList.map((s) => ({ params: { id: s.id } }));
+}
+
+const s = solutions[Astro.params.id as SolutionId];
+const other = solutionList.find((x) => x.id !== s.id)!;
+const groups = features.groups
+  .map((g) => ({ ...g, items: g.items.filter((f) => f.products.includes(s.id)) }))
+  .filter((g) => g.items.length > 0);
+const ld = [
+  { '@context': 'https://schema.org', '@type': 'SoftwareApplication', name: s.name, applicationCategory: 'BusinessApplication', operatingSystem: 'Web, Android, iOS', description: s.seoDescription, inLanguage: 'es-CO' },
+  { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: s.faqs.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })) },
+];
+---
+<Base title={s.seoTitle} description={s.seoDescription} jsonLd={ld}>
+  <div style={`--accent:${s.accent};--accent-ink:${s.accentInk}`}>
+    <section class="p-hero">
+      <div class="wrap p-hero-in">
+        <div class="copy">
+          <nav aria-label="Ruta de navegación" class="crumbs small">
+            <ol><li><a href="/">Inicio</a></li><li><a href="/soluciones">Software</a></li><li><a href={`/soluciones/${s.id}`} aria-current="page">{s.name}</a></li></ol>
+          </nav>
+          <Logo product={s.id} size={44} />
+          <h1>{s.headline}</h1>
+          <p class="lead">{s.intro}</p>
+          <ul class="aud" aria-label="Para">
+            {s.audience.map((a) => <li>{a}</li>)}
+          </ul>
+          <div class="actions">
+            <a class="btn" href={`/contacto?motivo=demo&producto=${s.id}`}>Pedir demo de {s.name}</a>
+            <a class="btn btn--ghost" href="#incluye">Ver qué incluye</a>
+          </div>
+        </div>
+        <div class="visual"><AgendaDemo variant={s.id} /></div>
+      </div>
+    </section>
+
+    <section class="section section--surface" aria-labelledby="needs-t">
+      <div class="wrap">
+        <div class="section-head"><h2 id="needs-t">Lo que resuelve en tu {s.id === 'salud' ? 'consultorio' : 'salón'}</h2></div>
+        <div class="needs">
+          {s.needs.map((n) => (
+            <div class="need">
+              <h3>{n.title}</h3>
+              <p>{n.text}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="flow-t">
+      <div class="wrap">
+        <div class="section-head"><h2 id="flow-t">Un día con {s.name}</h2><p>Desde que se agenda la cita hasta que las cuentas quedan hechas.</p></div>
+        <ol class="flow">
+          {s.workflow.map((w, i) => (
+            <li><span class="flow-n" aria-hidden="true">{i + 1}</span><div><h3>{w.title}</h3><p>{w.text}</p></div></li>
+          ))}
+        </ol>
+      </div>
+    </section>
+
+    <section class="section section--surface" id="incluye" aria-labelledby="feat-t">
+      <div class="wrap">
+        <div class="section-head"><h2 id="feat-t">Todo lo que incluye {s.name}</h2><p>Con el estado real de cada módulo. La administración y la contabilidad vienen incluidas, sin costo aparte.</p></div>
+        {groups.map((g) => (
+          <section class="fgroup" aria-labelledby={`g-${g.id}`}>
+            <h3 id={`g-${g.id}`} class:list={['gtitle', { admin: g.id === 'operacion' }]}>{g.title}</h3>
+            <ul class="flist">
+              {g.items.map((f) => (
+                <li>
+                  <span class:list={['fi', { admin: g.id === 'operacion' }]}><Icon name={f.icon} /></span>
+                  <div><div class="ft"><h4>{f.title}</h4><Status status={f.status} /></div><p>{f.text}</p></div>
+                </li>
+              ))}
+            </ul>
+          </section>
+        ))}
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="roles-t">
+      <div class="wrap two">
+        <div>
+          <h2 id="roles-t">Quién usa qué</h2>
+          <p class="muted">Cada persona entra con su rol y solo ve lo que necesita.</p>
+          <dl class="roles">
+            {s.roles.map((r) => (<div><dt>{r.name}</dt><dd>{r.can}</dd></div>))}
+          </dl>
+        </div>
+        <div>
+          <h2>Lo que conviene saber</h2>
+          <p class="muted">Para que decidas con información completa.</p>
+          <ul class="limits">
+            {s.limits.map((l) => <li><Icon name="Info" />{l}</li>)}
+          </ul>
+          <div class="other">
+            <p>¿Tu negocio es {other.id === 'belleza' ? 'un salón de belleza' : 'un consultorio de salud'}?</p>
+            <a href={`/soluciones/${other.id}`}>Conoce {other.name}</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section--surface" aria-labelledby="plans-t">
+      <div class="wrap">
+        <div class="section-head"><h2 id="plans-t">Planes de {s.name}</h2><p>Según el número de usuarios. Precios por cotización.</p></div>
+        <PlanCards product={s.id} />
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="faq-t">
+      <div class="wrap">
+        <div class="section-head"><h2 id="faq-t">Preguntas sobre {s.name}</h2></div>
+        <FaqList items={s.faqs} />
+      </div>
+    </section>
+  </div>
+
+  <CtaBand title={`Mira ${s.name} funcionando`} />
+</Base>
+
+<style>
+  .p-hero { position: relative; padding: var(--s-12) 0 var(--s-20); border-bottom: 1px solid var(--line);
+    background: linear-gradient(160deg, color-mix(in srgb, var(--accent) 9%, transparent), transparent 55%); }
+  .p-hero-in { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); gap: var(--s-16); align-items: center; }
+  .copy h1 { font-size: clamp(2rem, 3.8vw, 3rem); max-width: 18ch; margin-top: var(--s-6); }
+  .copy :global(.logo-text) { font-size: 1.6rem; }
+  .crumbs ol { list-style: none; display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: var(--s-6); color: var(--ink-3); }
+  .crumbs li + li::before { content: '/'; margin-right: 6px; color: var(--line-strong); }
+  .crumbs a { color: var(--ink-3); text-decoration: none; }
+  .crumbs a:hover { color: var(--c-brand); text-decoration: underline; }
+  .aud { list-style: none; display: flex; flex-wrap: wrap; gap: var(--s-2); margin: 0 0 var(--s-8); }
+  .aud li { font-size: var(--t-sm); font-weight: 600; padding: 5px 12px; border-radius: 999px; background: var(--surface); border: 1px solid var(--line); }
+  .actions { display: flex; gap: var(--s-3); flex-wrap: wrap; }
+  @media (max-width: 1000px) { .p-hero-in { grid-template-columns: 1fr; gap: var(--s-12); } }
+
+  .needs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-10) var(--s-12); }
+  .need { border-top: 2px solid var(--accent); padding-top: var(--s-5); }
+  .need h3 { font-size: var(--t-lg); }
+  .need p { color: var(--ink-2); margin: 0; }
+  .flow { list-style: none; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: var(--s-4); }
+  .flow li { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-lg); padding: var(--s-5); }
+  .flow-n { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; background: var(--surface); border: 2px solid var(--accent); color: var(--ink); font-weight: 700; font-size: var(--t-sm); margin-bottom: var(--s-4); }
+  .flow h3 { font-size: var(--t-base); margin-bottom: var(--s-2); }
+  .flow p { margin: 0; font-size: var(--t-sm); color: var(--ink-2); }
+  .fgroup + .fgroup { margin-top: var(--s-12); }
+  .gtitle { font-size: var(--t-lg); padding-bottom: var(--s-3); border-bottom: 2px solid var(--accent); }
+  .gtitle.admin { border-color: var(--c-admin); }
+  .flist { list-style: none; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 var(--s-10); }
+  .flist li { display: flex; gap: var(--s-4); padding: var(--s-5) 0; border-bottom: 1px solid var(--line); }
+  .fi { width: 40px; height: 40px; flex: none; border-radius: 10px; display: grid; place-items: center; color: var(--accent-ink); background: color-mix(in srgb, var(--accent) 12%, transparent); }
+  .fi.admin { color: var(--c-admin-ink); background: color-mix(in srgb, var(--c-admin) 12%, transparent); }
+  .ft { display: flex; flex-wrap: wrap; gap: var(--s-2) var(--s-3); align-items: center; margin-bottom: 4px; }
+  .ft h4 { margin: 0; font-size: var(--t-base); }
+  .flist p { margin: 0; color: var(--ink-2); font-size: var(--t-sm); }
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s-16); }
+  .two h2 { font-size: var(--t-xl); }
+  .roles { margin: var(--s-6) 0 0; }
+  .roles div { padding: var(--s-4) 0; border-bottom: 1px solid var(--line); }
+  .roles dt { font-weight: 650; }
+  .roles dd { margin: 4px 0 0; color: var(--ink-2); font-size: var(--t-sm); }
+  .limits { list-style: none; display: grid; gap: var(--s-3); margin: var(--s-6) 0; }
+  .limits li { display: flex; gap: var(--s-3); color: var(--ink-2); font-size: var(--t-sm); }
+  .limits :global(.ico) { width: 18px; height: 18px; color: var(--ink-3); margin-top: 2px; }
+  .other { padding: var(--s-6); border-radius: var(--r-lg); background: var(--surface); border: 1px solid var(--line); }
+  .other p { margin: 0 0 var(--s-2); color: var(--ink-2); }
+  .other a { font-weight: 600; }
+  @media (max-width: 1000px) { .flow { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 800px) { .needs, .flist, .two { grid-template-columns: 1fr; } .two { gap: var(--s-12); } }
+  @media (max-width: 520px) { .flow { grid-template-columns: 1fr; } }
+</style>

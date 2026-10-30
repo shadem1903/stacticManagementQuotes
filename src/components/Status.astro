@@ -1,0 +1,6 @@
+---
+interface Props { status: 'disponible' | 'en-desarrollo' | 'planeado' | string }
+const labels: Record<string, string> = { disponible: 'Disponible', 'en-desarrollo': 'En desarrollo', planeado: 'Planeado' };
+const { status } = Astro.props;
+---
+<span class={`status status--${status}`}>{labels[status] ?? status}</span>

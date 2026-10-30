@@ -1,0 +1,30 @@
+---
+interface Props { title: string; lead?: string; accent?: string; crumbs?: { href: string; label: string }[] }
+const { title, lead, accent = 'var(--c-brand)', crumbs = [] } = Astro.props;
+---
+<section class="page-hero" style={`--accent:${accent}`}>
+  <div class="wrap">
+    {crumbs.length > 0 && (
+      <nav aria-label="Ruta de navegación" class="crumbs small">
+        <ol>
+          <li><a href="/">Inicio</a></li>
+          {crumbs.map((c) => <li><a href={c.href}>{c.label}</a></li>)}
+        </ol>
+      </nav>
+    )}
+    <slot name="before" />
+    <h1>{title}</h1>
+    {lead && <p class="lead">{lead}</p>}
+    <slot />
+  </div>
+</section>
+<style>
+  .page-hero { padding: var(--s-16) 0 var(--s-12); position: relative; border-bottom: 1px solid var(--line); background:
+    linear-gradient(to right, color-mix(in srgb, var(--accent) 7%, transparent), transparent 60%); }
+  .page-hero::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: var(--accent); }
+  .page-hero h1 { max-width: 20ch; }
+  .crumbs ol { list-style: none; display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: var(--s-6); color: var(--ink-3); }
+  .crumbs li + li::before { content: '/'; margin-right: 6px; color: var(--line-strong); }
+  .crumbs a { color: var(--ink-3); text-decoration: none; }
+  .crumbs a:hover { color: var(--c-brand); text-decoration: underline; }
+</style>

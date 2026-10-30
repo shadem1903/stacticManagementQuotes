@@ -1,0 +1,18 @@
+---
+import Base from '../layouts/Base.astro';
+---
+<Base title="Página no encontrada" description="La página que buscas no existe." noindex>
+  <section class="section">
+    <div class="wrap nf">
+      <p class="code" aria-hidden="true">404</p>
+      <h1>Esta página no existe</h1>
+      <p class="lead">Puede que la dirección esté mal escrita o que la página se haya movido.</p>
+      <div class="a"><a class="btn" href="/">Ir al inicio</a><a class="btn btn--ghost" href="/contacto">Contactarnos</a></div>
+    </div>
+  </section>
+</Base>
+<style>
+  .nf { min-height: 50vh; display: flex; flex-direction: column; justify-content: center; }
+  .code { font-size: 6rem; font-weight: 800; letter-spacing: -0.05em; color: var(--c-brand-soft); -webkit-text-stroke: 2px var(--c-brand); margin: 0; line-height: 1; }
+  .a { display: flex; gap: var(--s-3); flex-wrap: wrap; margin-top: var(--s-4); }
+</style>

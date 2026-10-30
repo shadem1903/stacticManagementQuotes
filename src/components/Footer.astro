@@ -1,0 +1,98 @@
+---
+import Logo from './Logo.astro';
+import { company, has, socialLinks, portalUrl } from '../lib/company';
+import { legalNav } from '../lib/legal-nav';
+
+const year = new Date().getFullYear();
+const identity = [
+  has(company.legalName) && company.legalName,
+  has(company.nit) && `NIT ${company.nit}`,
+  has(company.address) && [company.address, company.city, company.country].filter(Boolean).join(', '),
+].filter(Boolean) as string[];
+const contacts = [
+  has(company.commercialEmail) && { label: company.commercialEmail, href: `mailto:${company.commercialEmail}` },
+  has(company.phone) && { label: company.phone, href: `tel:${company.phone.replace(/\s/g, '')}` },
+  has(company.whatsapp) && { label: 'WhatsApp', href: `https://wa.me/${company.whatsapp.replace(/\D/g, '')}` },
+].filter(Boolean) as { label: string; href: string }[];
+---
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="top">
+      <div class="about">
+        <Logo />
+        <p class="muted small">{company.tagline} Software para consultorios de salud y salones de belleza.</p>
+        {identity.length > 0 ? (
+          <address class="small">{identity.map((l) => <span>{l}</span>)}</address>
+        ) : (
+          <p class="small id-pending">Los datos de identificación del titular (razón social, NIT y domicilio) se publicarán antes del lanzamiento comercial.</p>
+        )}
+        {contacts.length > 0 && (
+          <ul class="contacts small">{contacts.map((c) => <li><a href={c.href}>{c.label}</a></li>)}</ul>
+        )}
+      </div>
+
+      <nav class="cols" aria-label="Pie de página">
+        <div>
+          <h2>Software</h2>
+          <ul>
+            <li><a href="/soluciones/salud">Cumplido Salud</a></li>
+            <li><a href="/soluciones/belleza">Cumplido Belleza</a></li>
+            <li><a href="/soluciones/administracion">Administración y contabilidad</a></li>
+            <li><a href="/funcionalidades">Funcionalidades</a></li>
+          </ul>
+        </div>
+        <div>
+          <h2>Empresa</h2>
+          <ul>
+            <li><a href="/planes">Planes</a></li>
+            <li><a href="/promociones">Promociones</a></li>
+            <li><a href="/nosotros">Nosotros</a></li>
+            <li><a href="/contacto">Contacto y soporte</a></li>
+            <li><a href="/preguntas-frecuentes">Preguntas frecuentes</a></li>
+            {portalUrl && <li><a href={portalUrl} rel="noopener">Acceso clientes</a></li>}
+          </ul>
+        </div>
+        <div class="legal-col">
+          <h2>Legal</h2>
+          <ul>
+            <li><a href="/legal">Centro legal</a></li>
+            {legalNav.map((d) => <li><a href={d.href}>{d.short}</a></li>)}
+          </ul>
+        </div>
+      </nav>
+    </div>
+
+    <div class="bottom small">
+      <p>© {year} {has(company.legalName) ? company.legalName : company.brandName}.</p>
+      <p class="muted">Este sitio no usa cookies de analítica ni de publicidad.</p>
+      {socialLinks.length > 0 && (
+        <ul class="social">{socialLinks.map((s) => <li><a href={s.url} rel="noopener me" target="_blank">{s.name}</a></li>)}</ul>
+      )}
+    </div>
+  </div>
+</footer>
+
+<style>
+  .site-footer { background: var(--surface); border-top: 1px solid var(--line); padding: var(--s-16) 0 var(--s-8); margin-top: 0; }
+  .top { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 2fr); gap: var(--s-12); }
+  .about p { margin-top: var(--s-4); max-width: 36ch; }
+  .id-pending { color: var(--ink-3); border-left: 2px solid var(--line-strong); padding-left: var(--s-3); }
+  address { font-style: normal; display: flex; flex-direction: column; color: var(--ink-2); margin-top: var(--s-4); }
+  .contacts { list-style: none; margin-top: var(--s-3); }
+  .cols { display: grid; grid-template-columns: 1fr 1fr 1.4fr; gap: var(--s-8); }
+  .cols h2 { font-size: var(--t-sm); font-weight: 650; color: var(--ink); margin-bottom: var(--s-3); letter-spacing: 0; }
+  .cols ul { list-style: none; display: grid; gap: 6px; }
+  .legal-col ul { grid-template-columns: 1fr; }
+  .cols a { color: var(--ink-2); text-decoration: none; font-size: var(--t-sm); }
+  .cols a:hover { color: var(--c-brand); text-decoration: underline; }
+  .bottom { display: flex; flex-wrap: wrap; gap: var(--s-2) var(--s-6); align-items: center; border-top: 1px solid var(--line); margin-top: var(--s-12); padding-top: var(--s-6); color: var(--ink-2); }
+  .bottom p { margin: 0; }
+  .social { list-style: none; display: flex; gap: var(--s-4); margin-left: auto; text-transform: capitalize; }
+  @media (max-width: 900px) {
+    .top { grid-template-columns: 1fr; gap: var(--s-10); }
+    .cols { grid-template-columns: 1fr 1fr; }
+    .legal-col { grid-column: 1 / -1; }
+    .legal-col ul { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 520px) { .legal-col ul { grid-template-columns: 1fr; } }
+</style>

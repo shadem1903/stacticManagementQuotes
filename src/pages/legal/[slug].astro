@@ -1,0 +1,127 @@
+---
+import Base from '../../layouts/Base.astro';
+import Icon from '../../components/Icon.astro';
+import { getCollection, render } from 'astro:content';
+import { company, has, missingLegalFields } from '../../lib/company';
+import { legalNav } from '../../lib/legal-nav';
+
+export async function getStaticPaths() {
+  const docs = await getCollection('legal');
+  return docs.map((doc) => ({ params: { slug: doc.id }, props: { doc } }));
+}
+
+const { doc } = Astro.props;
+const { Content, headings } = await render(doc);
+const d = doc.data;
+const missing = missingLegalFields();
+const isDraft = !d.legalReviewed || missing.length > 0;
+const fmt = (iso: string) => new Intl.DateTimeFormat('es-CO', { dateStyle: 'long', timeZone: 'America/Bogota' }).format(new Date(iso + 'T12:00:00-05:00'));
+const related = d.related.map((slug) => legalNav.find((n) => n.slug === slug)).filter(Boolean) as typeof legalNav;
+const toc = headings.filter((h) => h.depth === 2);
+---
+<Base title={d.title} description={d.description} noindex={isDraft}>
+  <div class="wrap legal">
+    <nav aria-label="Ruta de navegación" class="crumbs small">
+      <ol><li><a href="/">Inicio</a></li><li><a href="/legal">Legal</a></li></ol>
+    </nav>
+
+    <header class="head">
+      <h1>{d.title}</h1>
+      <p class="lead">{d.description}</p>
+    </header>
+
+    {isDraft && (
+      <div class="notice draft" role="note">
+        <Icon name="CircleAlert" />
+        <div>
+          <p><strong>Borrador pendiente de revisión jurídica.</strong> Este documento todavía no está vigente. Puede cambiar antes de su publicación definitiva{missing.length > 0 ? ' y faltan datos de identificación del titular, marcados como "Pendiente".' : '.'}</p>
+        </div>
+      </div>
+    )}
+
+    <div class="grid">
+      <aside class="meta-col">
+        <dl class="meta">
+          <div><dt>Responsable</dt><dd>{has(company.legalName) ? company.legalName : <mark class="pending">Pendiente: razón social</mark>}</dd></div>
+          <div><dt>Versión</dt><dd>{d.version}</dd></div>
+          <div><dt>Entrada en vigor</dt><dd>{d.effectiveDate ? fmt(d.effectiveDate) : 'Aún no vigente'}</dd></div>
+          <div><dt>Última actualización</dt><dd><time datetime={d.lastUpdated}>{fmt(d.lastUpdated)}</time></dd></div>
+        </dl>
+        {toc.length > 2 && (
+          <nav class="toc" aria-label="Contenido del documento">
+            <p class="toc-t">En este documento</p>
+            <ol>{toc.map((h) => <li><a href={`#${h.slug}`}>{h.text}</a></li>)}</ol>
+          </nav>
+        )}
+        <button class="btn btn--ghost btn--sm print" type="button" data-print><Icon name="Download" />Descargar o imprimir</button>
+      </aside>
+
+      <article class="prose">
+        <section class="scope">
+          <h2 class="scope-t">Finalidad y alcance</h2>
+          <p>{d.scope}</p>
+        </section>
+        <Content />
+
+        {related.length > 0 && (
+          <section class="related">
+            <h2>Documentos relacionados</h2>
+            <ul>{related.map((r) => <li><a href={r.href}>{r.short}</a></li>)}</ul>
+          </section>
+        )}
+        <section class="history">
+          <h2>Historial de versiones</h2>
+          <table>
+            <thead><tr><th scope="col">Versión</th><th scope="col">Fecha</th><th scope="col">Cambios</th></tr></thead>
+            <tbody>{d.history.map((h) => <tr><td>{h.version}</td><td>{fmt(h.date)}</td><td>{h.changes}</td></tr>)}</tbody>
+          </table>
+        </section>
+      </article>
+    </div>
+  </div>
+</Base>
+
+<style>
+  .legal { padding-block: var(--s-12) var(--s-20); }
+  .crumbs ol { list-style: none; display: flex; gap: 6px; color: var(--ink-3); margin-bottom: var(--s-6); }
+  .crumbs li + li::before { content: '/'; margin-right: 6px; color: var(--line-strong); }
+  .crumbs a { color: var(--ink-3); text-decoration: none; }
+  .head h1 { font-size: var(--t-2xl); max-width: 26ch; }
+  .draft { margin: var(--s-6) 0 var(--s-10); max-width: 900px; }
+  .grid { display: grid; grid-template-columns: 260px minmax(0, 1fr); gap: var(--s-12); align-items: start; }
+  .meta-col { position: sticky; top: calc(var(--header-h) + 24px); display: grid; gap: var(--s-6); }
+  .meta { margin: 0; border: 1px solid var(--line); border-radius: var(--r-lg); background: var(--surface); padding: var(--s-2) var(--s-5); }
+  .meta div { padding: var(--s-3) 0; border-bottom: 1px solid var(--line); }
+  .meta div:last-child { border: 0; }
+  .meta dt { font-size: var(--t-xs); color: var(--ink-3); font-weight: 600; }
+  .meta dd { margin: 2px 0 0; font-size: var(--t-sm); font-weight: 600; }
+  .toc-t { font-size: var(--t-sm); font-weight: 650; margin-bottom: var(--s-2); }
+  .toc ol { list-style: none; display: grid; gap: 4px; font-size: var(--t-sm); border-left: 2px solid var(--line); padding-left: var(--s-3); }
+  .toc a { color: var(--ink-2); text-decoration: none; }
+  .toc a:hover { color: var(--c-brand); text-decoration: underline; }
+  .print { justify-self: start; }
+  .scope { padding: var(--s-5); border-radius: var(--r-lg); background: var(--surface); border: 1px solid var(--line); }
+  .prose .scope-t { margin-top: 0; font-size: var(--t-md); padding-top: 0; }
+  .scope p { margin: 0; color: var(--ink-2); }
+  .related ul { list-style: none; padding: 0; }
+  @media (max-width: 900px) { .grid { grid-template-columns: minmax(0, 1fr); gap: var(--s-8); } .meta-col { position: static; } .toc { display: none; } }
+  @media print {
+    :global(.site-header), :global(.site-footer), .crumbs, .toc, .print, :global(.skip-link) { display: none !important; }
+    .grid { grid-template-columns: 1fr; }
+    .meta-col { position: static; }
+    :global(body) { background: #fff; color: #000; }
+  }
+</style>
+<script>
+  document.querySelector('[data-print]')?.addEventListener('click', () => window.print());
+  // Las tablas anchas se desplazan en horizontal: deben poder enfocarse con teclado.
+  document.querySelectorAll<HTMLTableElement>('.prose table').forEach((t) => {
+    const wrap = document.createElement('div');
+    wrap.className = 'tbl';
+    wrap.tabIndex = 0;
+    wrap.setAttribute('role', 'region');
+    wrap.setAttribute('aria-label', 'Tabla (desplazable en horizontal)');
+    t.replaceWith(wrap);
+    wrap.appendChild(t);
+  });
+</script>

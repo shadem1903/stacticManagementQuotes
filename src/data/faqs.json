@@ -1,0 +1,104 @@
+{
+  "$comment": "Preguntas frecuentes. 'home: true' las muestra en el inicio. Las respuestas deben coincidir con procesos reales.",
+  "categories": [
+    {
+      "id": "contratacion",
+      "title": "Contratación y planes",
+      "items": [
+        {
+          "q": "¿Cómo contrato Cumplido?",
+          "a": "Solicita una demostración del software que te interesa. Revisamos contigo tu negocio, el número de usuarios y los módulos que necesitas, y te enviamos una cotización escrita antes de cualquier pago.",
+          "home": true
+        },
+        {
+          "q": "¿Por qué no aparecen precios?",
+          "a": "Los precios todavía se definen por cotización según usuarios y módulos. Cuando haya tarifas aprobadas se publicarán en la página de planes con impuestos, periodicidad y condiciones.",
+          "home": true
+        },
+        {
+          "q": "¿Puedo cambiar de plan más adelante?",
+          "a": "Sí. El plan define el número de usuarios y los módulos habilitados, así que puedes ampliarlo o reducirlo cuando cambie tu operación. Las condiciones de cada cambio se indican en la cotización."
+        },
+        {
+          "q": "¿Puedo comprar en línea desde este sitio?",
+          "a": "No. Este sitio es informativo y de contacto comercial. No recibe pagos ni datos de tarjetas."
+        }
+      ]
+    },
+    {
+      "id": "producto",
+      "title": "Producto y funcionalidades",
+      "items": [
+        {
+          "q": "¿Cumplido ya está disponible?",
+          "a": "Cumplido está en desarrollo. En la página de funcionalidades indicamos el estado de cada módulo: en desarrollo o planeado. Solo marcamos como disponible lo que ya funciona en producción.",
+          "home": true
+        },
+        {
+          "q": "¿Qué diferencia hay entre Cumplido Salud y Cumplido Belleza?",
+          "a": "Son dos software distintos, cada uno pensado para su tipo de negocio. Cumplido Salud trae historia clínica, consentimientos y planes de tratamiento. Cumplido Belleza trae servicios, comisiones e historial de clientes. Los dos incluyen agenda, app para tus clientes, administración y contabilidad.",
+          "home": true
+        },
+        {
+          "q": "¿La administración y la contabilidad se pagan aparte?",
+          "a": "No. Caja, pagos, cartera, gastos, inventario, personal, reportes y contabilidad vienen incluidos en Cumplido Salud y en Cumplido Belleza. No hay un tercer software que comprar.",
+          "home": true
+        },
+        {
+          "q": "¿Mis clientes o pacientes pueden reservar desde el celular?",
+          "a": "La app para pacientes y clientes está en desarrollo, en los dos software. Incluye reserva de citas, consulta de servicios, historial, pagos y recordatorios."
+        },
+        {
+          "q": "¿Emite facturación electrónica?",
+          "a": "Está planeada mediante un proveedor tecnológico autorizado por la DIAN. Hasta que esté disponible, Cumplido no emite facturas electrónicas."
+        },
+        {
+          "q": "Mi negocio hace salud y estética, ¿qué software me sirve?",
+          "a": "Cuéntanos en la demostración qué servicios ofreces. Según el peso de cada área te recomendamos uno de los dos o una combinación."
+        }
+      ]
+    },
+    {
+      "id": "implementacion",
+      "title": "Configuración y soporte",
+      "items": [
+        {
+          "q": "¿Cuánto tarda la configuración inicial?",
+          "a": "Depende de la cantidad de profesionales, servicios e información que quieras cargar. En la demostración estimamos los tiempos para tu caso."
+        },
+        {
+          "q": "¿Qué soporte incluye?",
+          "a": "Cada plan define un nivel de soporte (estándar, prioritario o extendido). Los canales y horarios se confirman en la cotización.",
+          "home": true
+        },
+        {
+          "q": "¿Puedo traer la información que ya tengo?",
+          "a": "Podemos revisar contigo los datos que manejas hoy (hojas de cálculo u otro sistema) para definir cómo importarlos."
+        }
+      ]
+    },
+    {
+      "id": "datos",
+      "title": "Seguridad, datos y cancelación",
+      "items": [
+        {
+          "q": "¿Quién es dueño de la información de mis clientes y pacientes?",
+          "a": "Tu empresa. Dentro de Cumplido, tu empresa es responsable de esos datos y nosotros los tratamos por tu encargo, solo para prestar el servicio. Lo explicamos en la página de tratamiento por encargo.",
+          "home": true
+        },
+        {
+          "q": "¿Cómo se protege la información clínica?",
+          "a": "La información clínica solo se gestiona dentro del entorno autenticado de Cumplido Salud, con permisos por rol. Nunca la solicitamos en formularios públicos como el de contacto."
+        },
+        {
+          "q": "¿Qué pasa con mis datos si cancelo?",
+          "a": "Las condiciones de exportación y eliminación de datos al terminar el servicio se describen en las condiciones del servicio SaaS y en la política de cancelaciones."
+        },
+        {
+          "q": "¿Este sitio usa cookies de seguimiento?",
+          "a": "No. El sitio no usa analítica, publicidad ni herramientas de terceros. Solo guarda en tu navegador la preferencia de tema claro u oscuro si la eliges."
+        }
+      ]
+    }
+  ]
+}

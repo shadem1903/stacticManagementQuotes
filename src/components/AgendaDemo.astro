@@ -1,0 +1,201 @@
+---
+// Representación ilustrativa de la agenda (no es una captura).
+// Muestra cómo una cita conecta agenda, recordatorios, inventario y reportes.
+import Icon from './Icon.astro';
+
+interface Props { variant?: 'salud' | 'belleza'; id?: string; hidden?: boolean }
+const { variant = 'salud', id = `demo-${variant}`, hidden = false } = Astro.props;
+const H = 'var(--c-health)';
+const B = 'var(--c-beauty)';
+const data = {
+  salud: {
+    title: 'Cumplido Salud',
+    pros: [
+      { name: 'Dra. Paula R.', area: 'Odontología' },
+      { name: 'Dr. Julián O.', area: 'Odontología' },
+      { name: 'Andrés M.', area: 'Fisioterapia' },
+    ],
+    appts: [
+      { col: 1, start: 1, end: 3, who: 'Laura G.', what: 'Control de ortodoncia' },
+      { col: 2, start: 1, end: 2, who: 'Pedro N.', what: 'Limpieza' },
+      { col: 3, start: 2, end: 4, who: 'Jorge P.', what: 'Sesión 4 de 10' },
+      { col: 2, start: 3, end: 6, who: 'Sara M.', what: 'Endodoncia' },
+      { col: 1, start: 6, end: 8, who: 'Mateo R.', what: 'Resina dental' },
+      { col: 3, start: 6, end: 8, who: 'Ana V.', what: 'Valoración inicial' },
+      { col: 2, start: 7, end: 9, who: 'Elena C.', what: 'Control' },
+    ],
+    side: ['CalendarDays', 'Users', 'ClipboardList', 'Boxes', 'Wallet', 'ChartColumn'],
+    color: H,
+    stock: { t: 'Resina A2 por reponer', d: 'Quedan 3 unidades' },
+    kpi: { t: 'Ocupación de hoy', v: 78 },
+  },
+  belleza: {
+    title: 'Cumplido Belleza',
+    pros: [
+      { name: 'Camila T.', area: 'Estilista' },
+      { name: 'Kevin R.', area: 'Barbero' },
+      { name: 'Luisa P.', area: 'Manicurista' },
+    ],
+    appts: [
+      { col: 1, start: 1, end: 2, who: 'Sofía L.', what: 'Corte y peinado' },
+      { col: 2, start: 1, end: 3, who: 'Daniel S.', what: 'Barba y corte' },
+      { col: 3, start: 2, end: 4, who: 'Mariana F.', what: 'Semipermanente' },
+      { col: 1, start: 3, end: 6, who: 'Valentina C.', what: 'Color y tratamiento' },
+      { col: 2, start: 4, end: 5, who: 'Andrés G.', what: 'Corte' },
+      { col: 3, start: 5, end: 7, who: 'Paola D.', what: 'Pedicure spa' },
+      { col: 2, start: 7, end: 9, who: 'Felipe M.', what: 'Corte y cejas' },
+    ],
+    side: ['CalendarDays', 'Users', 'Scissors', 'Boxes', 'Wallet', 'ChartColumn'],
+    color: B,
+    stock: { t: 'Shampoo hidratante por reponer', d: 'Quedan 2 unidades' },
+    kpi: { t: 'Comisiones de hoy', v: 64 },
+  },
+}[variant];
+const hours = ['8:00', '9:00', '10:00', '11:00', '12:00'];
+const first = data.appts[0];
+---
+<figure class="demo" id={id} aria-labelledby={`${id}-cap`} hidden={hidden} data-demo={variant}>
+  <div class="frame" aria-hidden="true">
+    <aside class="side">
+      <span class="side-logo"></span>
+      {data.side.map((ic, i) => <span class:list={['side-i', { on: i === 0 }]}><Icon name={ic} /></span>)}
+    </aside>
+    <div class="main">
+      <div class="top">
+        <div>
+          <span class="top-title">Agenda</span><span class="top-prod" style={`--c:${data.color}`}>{data.title}</span>
+          <span class="top-date">Jueves 29 de octubre</span>
+        </div>
+      </div>
+
+      <div class="grid">
+        <div class="corner"></div>
+        {data.pros.map((p) => (
+          <div class="pro" style={`--c:${data.color}`}>
+            <span class="pro-dot"></span>
+            <span class="pro-name">{p.name}</span>
+            <span class="pro-area">{p.area}</span>
+          </div>
+        ))}
+        <div class="hours">
+          {hours.map((h) => <span>{h}</span>)}
+        </div>
+        <div class="slots">
+          {Array.from({ length: 3 }).map(() => <div class="col"></div>)}
+          {data.appts.map((a, i) => (
+            <div class:list={['appt', { short: a.end - a.start === 1 }]} style={`--c:${data.color};--i:${i};grid-column:${a.col};grid-row:${a.start} / ${a.end}`}>
+              <strong>{a.who}</strong>
+              <span>{a.what}</span>
+            </div>
+          ))}
+          <div class="now"><span></span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="float f-reminder">
+      <span class="f-ico" style="--c:var(--c-brand)"><Icon name="Bell" /></span>
+      <span><strong>Recordatorio enviado</strong><em>{first.who}, hoy a las 8:00</em></span>
+    </div>
+    <div class="float f-stock">
+      <span class="f-ico" style="--c:var(--c-admin)"><Icon name="Boxes" /></span>
+      <span><strong>{data.stock.t}</strong><em>{data.stock.d}</em></span>
+    </div>
+    <div class="float f-kpi">
+      <span class="kpi-label">{data.kpi.t}</span>
+      <span class="kpi-val"><b>{data.kpi.v}</b>%</span>
+      <span class="kpi-bar"><i style={`width:${data.kpi.v}%`}></i></span>
+    </div>
+  </div>
+  <figcaption id={`${id}-cap`} class="small muted">Ilustración de {data.title} (en desarrollo): cada cita envía el recordatorio, descuenta inventario y alimenta caja y reportes. Nombres ficticios.</figcaption>
+</figure>
+
+<style>
+  .demo { margin: 0; position: relative; }
+  .demo figcaption { margin-top: var(--s-12); max-width: 52ch; }
+  .frame {
+    --bd: var(--line);
+    position: relative; display: grid; grid-template-columns: 52px 1fr;
+    background: var(--surface); border: 1px solid var(--bd); border-radius: var(--r-xl);
+    box-shadow: var(--shadow-2); overflow: visible; min-height: 420px;
+    font-size: 12px; line-height: 1.3;
+  }
+  .side { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 14px 0; border-right: 1px solid var(--bd); background: var(--surface-2); border-radius: var(--r-xl) 0 0 var(--r-xl); }
+  .side-logo { width: 26px; height: 26px; border-radius: 8px; background: var(--c-brand); margin-bottom: 8px; }
+  .side-i { width: 34px; height: 34px; display: grid; place-items: center; border-radius: 9px; color: var(--ink-3); }
+  .side-i :global(.ico) { width: 17px; height: 17px; }
+  .side-i.on { background: var(--c-brand-soft); color: var(--c-brand); }
+  .main { padding: 14px 16px 16px; min-width: 0; }
+  .top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+  .top-title { font-weight: 700; font-size: 15px; color: var(--ink); }
+  .top-date { color: var(--ink-3); display: block; }
+  .top-prod { display: inline-block; margin-left: 8px; font-size: 11px; font-weight: 650; padding: 2px 7px; border-radius: 99px; color: var(--ink); background: color-mix(in srgb, var(--c) 16%, transparent); vertical-align: 2px; }
+  .demo[hidden] { display: none; }
+  .top-btn { display: inline-flex; gap: 6px; align-items: center; background: var(--c-brand); color: var(--on-brand); font-weight: 600; padding: 7px 10px; border-radius: 8px; }
+  .top-btn :global(.ico) { width: 14px; height: 14px; }
+
+  .grid { display: grid; grid-template-columns: 38px repeat(3, minmax(0, 1fr)); grid-template-rows: auto 1fr; column-gap: 6px; }
+  .pro { padding: 6px 4px 8px; border-bottom: 1px solid var(--bd); min-width: 0; }
+  .pro-dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--c); margin-right: 5px; }
+  .pro-name { font-weight: 650; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .pro-area { display: block; color: var(--ink-3); font-size: 11px; }
+  .hours { display: grid; grid-template-rows: repeat(5, 64px); padding-top: 4px; }
+  .hours span { color: var(--ink-3); font-size: 10.5px; transform: translateY(-6px); font-variant-numeric: tabular-nums; }
+  .slots {
+    grid-column: 2 / -1; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); grid-template-rows: repeat(10, 32px);
+    column-gap: 6px; padding-top: 4px; position: relative;
+    background-image: linear-gradient(var(--bd) 1px, transparent 1px);
+    background-size: 100% 64px; background-position: 0 4px;
+  }
+  .col { grid-row: 1 / -1; border-radius: 6px; }
+  .col:nth-child(1) { grid-column: 1; } .col:nth-child(2) { grid-column: 2; } .col:nth-child(3) { grid-column: 3; }
+  .appt {
+    margin: 2px 0; padding: 6px 8px; border-radius: 8px; min-width: 0; overflow: hidden;
+    background: color-mix(in srgb, var(--c) 11%, var(--surface)); border-left: 3px solid var(--c);
+    color: var(--ink); display: flex; flex-direction: column; gap: 1px;
+    animation: drop .55s cubic-bezier(.2, .9, .3, 1.2) both; animation-delay: calc(450ms + var(--i) * 140ms);
+  }
+  .appt.short { padding-block: 4px; justify-content: center; }
+  .appt.short span { display: none; }
+  .appt strong { font-weight: 650; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .appt span { color: var(--ink-2); font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  @keyframes drop { from { opacity: 0; transform: translateY(-10px) scale(.96); } to { opacity: 1; transform: none; } }
+
+  .now { position: absolute; left: 0; right: 0; top: 4px; height: 0; border-top: 2px solid var(--c-beauty); animation: now 2.2s ease-out 1.6s both; }
+  .now span { position: absolute; left: -5px; top: -6px; width: 10px; height: 10px; border-radius: 50%; background: var(--c-beauty); }
+  @keyframes now { from { top: 4px; opacity: 0; } 15% { opacity: 1; } to { top: 150px; opacity: 1; } }
+
+  .float {
+    position: absolute; display: flex; gap: 10px; align-items: center;
+    background: var(--surface); border: 1px solid var(--bd); border-radius: 12px; padding: 10px 12px;
+    box-shadow: var(--shadow-2); font-size: 12px; animation: pop .5s cubic-bezier(.2, .9, .3, 1.15) both;
+  }
+  .float strong { display: block; color: var(--ink); font-weight: 650; }
+  .float em { font-style: normal; color: var(--ink-3); }
+  .f-ico { width: 30px; height: 30px; border-radius: 8px; display: grid; place-items: center; color: var(--c); background: color-mix(in srgb, var(--c) 13%, transparent); flex: none; }
+  .f-ico :global(.ico) { width: 16px; height: 16px; }
+  .f-reminder { right: 18px; top: -24px; animation-delay: 1.75s; }
+  .f-stock { left: 26px; bottom: -26px; animation-delay: 2.3s; }
+  .f-kpi { right: 28px; bottom: -34px; flex-direction: column; align-items: flex-start; gap: 4px; min-width: 150px; animation-delay: 2.75s; }
+  .kpi-label { color: var(--ink-3); }
+  .kpi-val { font-size: 22px; font-weight: 750; color: var(--ink); letter-spacing: -0.02em; line-height: 1; }
+  .kpi-bar { display: block; width: 100%; height: 6px; background: var(--c-brand-soft); border-radius: 99px; overflow: hidden; }
+  .kpi-bar i { display: block; height: 100%; background: var(--c-admin); border-radius: inherit; transform-origin: left; animation: fill 1s ease-out 3s both; }
+  @keyframes pop { from { opacity: 0; transform: translateY(12px) scale(.94); } to { opacity: 1; transform: none; } }
+  @keyframes fill { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+
+  
+  @media (max-width: 560px) {
+    .frame { grid-template-columns: 1fr; min-height: 0; font-size: 11px; }
+    .side { display: none; }
+    .main { padding: 12px; }
+    .grid { grid-template-columns: 30px repeat(3, minmax(0, 1fr)); column-gap: 4px; }
+    .slots { column-gap: 4px; }
+    .appt { padding: 5px 6px; }
+    .appt span { display: none; }
+    .pro-area { display: none; }
+    .f-reminder { top: auto; bottom: 64px; right: 8px; }
+    .f-stock { display: none; }
+    .f-kpi { right: 8px; bottom: -24px; min-width: 130px; }
+  }
+</style>

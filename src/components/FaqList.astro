@@ -1,0 +1,27 @@
+---
+interface Props { items: { q: string; a: string }[]; idPrefix?: string }
+const { items } = Astro.props;
+---
+<div class="faq">
+  {items.map((f) => (
+    <details>
+      <summary><span>{f.q}</span><span class="pm" aria-hidden="true"></span></summary>
+      <div class="ans"><p>{f.a}</p></div>
+    </details>
+  ))}
+</div>
+<style>
+  .faq { border-top: 1px solid var(--line); max-width: 820px; }
+  details { border-bottom: 1px solid var(--line); }
+  summary { list-style: none; cursor: pointer; display: flex; justify-content: space-between; gap: var(--s-6); align-items: center; padding: var(--s-5) 0; font-weight: 600; font-size: var(--t-md); color: var(--ink); }
+  summary::-webkit-details-marker { display: none; }
+  summary:hover { color: var(--c-brand); }
+  .pm { position: relative; width: 14px; height: 14px; flex: none; }
+  .pm::before, .pm::after { content: ''; position: absolute; left: 0; right: 0; top: 6px; height: 2px; background: currentColor; border-radius: 2px; transition: transform .25s ease; }
+  .pm::after { transform: rotate(90deg); }
+  details[open] .pm::after { transform: rotate(0); }
+  .ans { color: var(--ink-2); padding: 0 0 var(--s-5); max-width: 68ch; }
+  details[open] .ans { animation: open .25s ease-out; }
+  @keyframes open { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+  .ans p { margin: 0; }
+</style>

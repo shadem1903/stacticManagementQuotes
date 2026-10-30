@@ -1,0 +1,99 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import Icon from '../components/Icon.astro';
+import Status from '../components/Status.astro';
+import CtaBand from '../components/CtaBand.astro';
+import features from '../data/features.json';
+
+const all = features.groups.flatMap((g) => g.items);
+const count = (st: string) => all.filter((f) => f.status === st).length;
+const areaLabel: Record<string, string> = { salud: 'Cumplido Salud', belleza: 'Cumplido Belleza' };
+---
+<Base title="Funcionalidades" description="Funcionalidades de Cumplido Salud y Cumplido Belleza con su estado real: agenda, historia clínica, servicios, comisiones, inventario, caja, contabilidad, reportes y permisos.">
+  <PageHero
+    title="Funcionalidades y su estado real"
+    lead="Cumplido está en desarrollo. Publicamos el estado de cada módulo de Cumplido Salud y Cumplido Belleza para que sepas qué existe hoy y qué viene después."
+    crumbs={[{ href: '/funcionalidades', label: 'Funcionalidades' }]}
+  >
+    <dl class="legend">
+      <div><dt><Status status="disponible" /></dt><dd>Funciona en producción ({count('disponible')})</dd></div>
+      <div><dt><Status status="en-desarrollo" /></dt><dd>En construcción ({count('en-desarrollo')})</dd></div>
+      <div><dt><Status status="planeado" /></dt><dd>En el plan, sin fecha comprometida ({count('planeado')})</dd></div>
+    </dl>
+  </PageHero>
+
+  <div class="filter-bar">
+    <div class="wrap">
+      <fieldset class="filters" data-filters>
+        <legend class="sr-only">Filtrar por software</legend>
+        {[['todas', 'Todas'], ['salud', 'Cumplido Salud'], ['belleza', 'Cumplido Belleza']].map(([v, l], i) => (
+          <label><input type="radio" name="area" value={v} checked={i === 0} /><span>{l}</span></label>
+        ))}
+      </fieldset>
+    </div>
+  </div>
+
+  <section class="section">
+    <div class="wrap">
+      {features.groups.map((g) => (
+        <section class="group" aria-labelledby={`g-${g.id}`} data-group>
+          <h2 id={`g-${g.id}`}>{g.title}</h2>
+          <ul class="items">
+            {g.items.map((f) => (
+              <li data-areas={f.products.join(' ')}>
+                <span class="fi"><Icon name={f.icon} /></span>
+                <div>
+                  <div class="ft"><h3>{f.title}</h3><Status status={f.status} /></div>
+                  <p>{f.text}</p>
+                  <p class="areas">{f.products.length === 2 ? 'En los dos software' : `Solo en ${areaLabel[f.products[0]]}`}</p>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))}
+      <p class="empty" hidden data-empty>No hay funcionalidades para este filtro.</p>
+    </div>
+  </section>
+  <CtaBand title="¿Necesitas algo que no aparece aquí?" text="Cuéntanos qué te hace falta. Las solicitudes de clientes nos ayudan a priorizar lo que construimos." />
+</Base>
+<style>
+  .legend { display: flex; flex-wrap: wrap; gap: var(--s-3) var(--s-8); margin: var(--s-4) 0 0; }
+  .legend div { display: flex; gap: var(--s-3); align-items: center; }
+  .legend dd { margin: 0; font-size: var(--t-sm); color: var(--ink-2); }
+  .filter-bar { position: sticky; top: var(--header-h); z-index: 10; background: color-mix(in srgb, var(--bg) 92%, transparent); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
+  .filters { border: 0; margin: 0; padding: var(--s-3) 0; display: flex; gap: var(--s-2); overflow-x: auto; }
+  .filters label { position: relative; flex: none; }
+  .filters input { position: absolute; opacity: 0; inset: 0; cursor: pointer; }
+  .filters span { display: inline-block; padding: 7px 14px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); font-size: var(--t-sm); font-weight: 600; color: var(--ink-2); }
+  .filters input:checked + span { background: var(--c-brand); border-color: var(--c-brand); color: var(--on-brand); }
+  .filters input:focus-visible + span { outline: 3px solid var(--focus); outline-offset: 2px; }
+  .group + .group { margin-top: var(--s-16); }
+  .group h2 { font-size: var(--t-xl); padding-bottom: var(--s-3); border-bottom: 2px solid var(--ink); }
+  .items { list-style: none; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 var(--s-10); }
+  .items li { display: flex; gap: var(--s-4); padding: var(--s-5) 0; border-bottom: 1px solid var(--line); }
+  .items li[hidden] { display: none; }
+  .fi { width: 40px; height: 40px; flex: none; border-radius: 10px; display: grid; place-items: center; color: var(--c-brand); background: var(--c-brand-soft); }
+  .ft { display: flex; flex-wrap: wrap; gap: var(--s-2) var(--s-3); align-items: center; margin-bottom: 4px; }
+  .ft h3 { margin: 0; font-size: var(--t-base); }
+  .items p { margin: 0; color: var(--ink-2); font-size: var(--t-sm); }
+  .items .areas { color: var(--ink-3); font-size: var(--t-xs); margin-top: 6px; }
+  @media (max-width: 800px) { .items { grid-template-columns: 1fr; } }
+</style>
+<script>
+  const filters = document.querySelector('[data-filters]');
+  filters?.addEventListener('change', (e) => {
+    const v = (e.target as HTMLInputElement).value;
+    let shown = 0;
+    document.querySelectorAll<HTMLElement>('[data-group]').forEach((g) => {
+      let any = false;
+      g.querySelectorAll<HTMLElement>('li[data-areas]').forEach((li) => {
+        const ok = v === 'todas' || li.dataset.areas!.split(' ').includes(v);
+        li.hidden = !ok; if (ok) { any = true; shown++; }
+      });
+      g.hidden = !any;
+    });
+    (document.querySelector('[data-empty]') as HTMLElement).hidden = shown > 0;
+  });
+</script>

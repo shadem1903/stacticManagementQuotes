@@ -1,0 +1,54 @@
+{
+  "$comment": "Estado real de cada funcionalidad. status: disponible | en-desarrollo | planeado. products: en qué software está (salud, belleza). Cambia el estado solo cuando esté verificado en producción.",
+  "groups": [
+    {
+      "id": "agenda",
+      "title": "Agenda y clientes",
+      "items": [
+        { "id": "agenda-citas", "icon": "CalendarDays", "title": "Agenda y citas", "text": "Agenda por profesional, servicio y sede, con estados de la cita y reprogramación.", "products": ["salud", "belleza"], "status": "en-desarrollo" },
+        { "id": "clientes", "icon": "Users", "title": "Ficha de pacientes y clientes", "text": "Datos, historial de citas, pagos y notas de cada persona en un solo lugar.", "products": ["salud", "belleza"], "status": "en-desarrollo" },
+        { "id": "app-movil", "icon": "Smartphone", "title": "App para tus pacientes o clientes", "text": "Reservan, consultan servicios, ven su historial y sus pagos desde el celular.", "products": ["salud", "belleza"], "status": "en-desarrollo" },
+        { "id": "notificaciones", "icon": "Bell", "title": "Recordatorios automáticos", "text": "Avisos de cita por notificación push y correo.", "products": ["salud", "belleza"], "status": "en-desarrollo" },
+        { "id": "mensajeria", "icon": "MessageSquare", "title": "Confirmaciones por SMS y WhatsApp", "text": "Confirmación de citas por mensajería, con un proveedor externo.", "products": ["salud", "belleza"], "status": "planeado" },
+        { "id": "chat-ia", "icon": "Bot", "title": "Asistente de citas con IA", "text": "Ayuda a encontrar horarios y responde preguntas frecuentes.", "products": ["salud", "belleza"], "status": "planeado" }
+      ]
+    },
+    {
+      "id": "clinica",
+      "title": "Atención clínica",
+      "product": "salud",
+      "items": [
+        { "id": "historia-clinica", "icon": "ClipboardList", "title": "Historia clínica", "text": "Odontología y fisioterapia, con valoración inicial y evolución por sesión.", "products": ["salud"], "status": "en-desarrollo" },
+        { "id": "consentimientos", "icon": "FileText", "title": "Consentimientos informados", "text": "Asociados al paciente, con firma del profesional.", "products": ["salud"], "status": "en-desarrollo" },
+        { "id": "planes-terapia", "icon": "Activity", "title": "Planes de tratamiento y paquetes", "text": "Sesiones hechas y pendientes, con saldo por paquete.", "products": ["salud"], "status": "en-desarrollo" },
+        { "id": "calidad", "icon": "ShieldCheck", "title": "Calidad y cumplimiento", "text": "Documentos y vencimientos, PQRS, eventos adversos, protocolos y soportes de habilitación.", "products": ["salud"], "status": "planeado" }
+      ]
+    },
+    {
+      "id": "belleza",
+      "title": "Atención en el salón",
+      "product": "belleza",
+      "items": [
+        { "id": "servicios", "icon": "Scissors", "title": "Servicios y tratamientos", "text": "Catálogo con duración, precio, profesional y comisión; paquetes y control de sesiones.", "products": ["belleza"], "status": "en-desarrollo" },
+        { "id": "historial-cliente", "icon": "UserRound", "title": "Historial y preferencias", "text": "Servicios hechos, productos usados y cuándo le toca volver a cada cliente.", "products": ["belleza"], "status": "en-desarrollo" },
+        { "id": "comisiones", "icon": "Calculator", "title": "Comisiones", "text": "Por profesional o por servicio, calculadas con lo hecho y cobrado.", "products": ["belleza"], "status": "en-desarrollo" }
+      ]
+    },
+    {
+      "id": "operacion",
+      "title": "Administración y contabilidad (incluidas)",
+      "items": [
+        { "id": "caja", "icon": "Wallet", "title": "Caja y pagos", "text": "Cobros por método de pago, abonos, devoluciones y cierre de caja.", "products": ["salud", "belleza"], "status": "en-desarrollo" },
+        { "id": "cartera", "icon": "Receipt", "title": "Cartera y gastos", "text": "Saldos pendientes de pacientes o clientes, gastos y cuentas por pagar.", "products": ["salud", "belleza"], "status": "en-desarrollo" },
+        { "id": "contabilidad", "icon": "Calculator", "title": "Contabilidad", "text": "Ingresos y egresos registrados desde la operación diaria, comprobantes y estados financieros del negocio.", "products": ["salud", "belleza"], "status": "en-desarrollo" },
+        { "id": "facturacion", "icon": "FileText", "title": "Facturación electrónica", "text": "Emisión de facturas electrónicas con un proveedor tecnológico autorizado por la DIAN.", "products": ["salud", "belleza"], "status": "planeado" },
+        { "id": "inventario", "icon": "Boxes", "title": "Inventario y compras", "text": "Insumos y productos, proveedores, lotes y vencimientos, y consumo por servicio.", "products": ["salud", "belleza"], "status": "en-desarrollo" },
+        { "id": "personal", "icon": "Briefcase", "title": "Personal", "text": "Horarios, turnos, honorarios y novedades del equipo.", "products": ["salud", "belleza"], "status": "en-desarrollo" },
+        { "id": "reportes", "icon": "ChartColumn", "title": "Reportes y tablero", "text": "Ventas, gastos, utilidad, ocupación de agenda, cancelaciones y productividad por profesional.", "products": ["salud", "belleza"], "status": "en-desarrollo" },
+        { "id": "roles", "icon": "UserCog", "title": "Usuarios y permisos", "text": "Permisos de lectura, escritura y eliminación por módulo, área y función.", "products": ["salud", "belleza"], "status": "en-desarrollo" },
+        { "id": "multisede", "icon": "Building2", "title": "Varias sedes", "text": "Más de una sede bajo la misma empresa, con reportes por sede.", "products": ["salud", "belleza"], "status": "planeado" },
+        { "id": "api", "icon": "Plug", "title": "API e integraciones", "text": "Servicios web para conectar con otros sistemas.", "products": ["salud", "belleza"], "status": "planeado" }
+      ]
+    }
+  ]
+}

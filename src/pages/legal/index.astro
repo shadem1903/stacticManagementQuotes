@@ -1,0 +1,62 @@
+---
+import Base from '../../layouts/Base.astro';
+import PageHero from '../../components/PageHero.astro';
+import { getCollection } from 'astro:content';
+import { legalNav, legalCategories } from '../../lib/legal-nav';
+import { company, has, missingLegalFields } from '../../lib/company';
+
+const docs = await getCollection('legal');
+const byId = Object.fromEntries(docs.map((d) => [d.id, d]));
+const draft = missingLegalFields().length > 0 || docs.some((d) => !d.data.legalReviewed);
+---
+<Base title="Centro legal" description="Políticas de privacidad y tratamiento de datos, cookies, términos de uso, condiciones del servicio, cancelaciones, promociones y seguridad.">
+  <PageHero
+    title="Centro legal"
+    lead="Todos nuestros documentos, de acceso libre y sin iniciar sesión. Cada uno indica su versión y sus fechas."
+    crumbs={[{ href: '/legal', label: 'Legal' }]}
+  >
+    {draft && (
+      <div class="notice" role="note">
+        <p><strong>Documentos en borrador.</strong> Están pendientes de revisión jurídica y de los datos de identificación del titular. No se consideran vigentes hasta su publicación definitiva.</p>
+      </div>
+    )}
+  </PageHero>
+  <section class="section">
+    <div class="wrap cats">
+      {legalCategories.map((c) => (
+        <section aria-labelledby={`c-${c.id}`}>
+          <h2 id={`c-${c.id}`}>{c.title}</h2>
+          <ul>
+            {legalNav.filter((n) => n.category === c.id).map((n) => {
+              const doc = byId[n.slug];
+              return (
+                <li>
+                  <a href={n.href}>{doc?.data.title ?? n.short}</a>
+                  <p>{doc?.data.description}</p>
+                  <span class="v small">Versión {doc?.data.version}</span>
+                </li>
+              );
+            })}
+          </ul>
+        </section>
+      ))}
+      <section class="contact-box">
+        <h2>Consultas sobre tus datos</h2>
+        <p>Para conocer, actualizar, rectificar o suprimir tus datos, o revocar tu autorización, escribe a {has(company.privacyEmail) ? <a href={`mailto:${company.privacyEmail}`}>{company.privacyEmail}</a> : 'nuestro canal de protección de datos (se publicará con la versión definitiva)'} o usa el <a href="/contacto">formulario de contacto</a>.</p>
+      </section>
+    </div>
+  </section>
+</Base>
+<style>
+  .notice { margin-top: var(--s-6); max-width: 760px; }
+  .cats { display: grid; gap: var(--s-12); }
+  .cats h2 { font-size: var(--t-xl); padding-bottom: var(--s-3); border-bottom: 2px solid var(--ink); }
+  .cats ul { list-style: none; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 var(--s-10); }
+  .cats li { padding: var(--s-5) 0; border-bottom: 1px solid var(--line); }
+  .cats li a { font-weight: 650; font-size: var(--t-md); }
+  .cats li p { margin: 4px 0; color: var(--ink-2); font-size: var(--t-sm); }
+  .v { color: var(--ink-3); }
+  .contact-box { padding: var(--s-8); background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-lg); max-width: 760px; }
+  .contact-box h2 { border: 0; padding: 0; }
+  @media (max-width: 800px) { .cats ul { grid-template-columns: 1fr; } }
+</style>

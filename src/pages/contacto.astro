@@ -1,0 +1,337 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import Icon from '../components/Icon.astro';
+import { getEntry } from 'astro:content';
+import { company, has, contactEndpoint } from '../lib/company';
+import { SECTORS, REASONS, CHANNELS, LIMITS } from '../lib/contact';
+
+const aviso = await getEntry('legal', 'aviso-de-privacidad');
+const avisoVersion = aviso?.data.version ?? 'sin-version';
+const channels = [
+  has(company.commercialEmail) && { icon: 'Mail', label: 'Correo comercial', value: company.commercialEmail, href: `mailto:${company.commercialEmail}` },
+  has(company.phone) && { icon: 'Phone', label: 'Teléfono', value: company.phone, href: `tel:${company.phone.replace(/\s/g, '')}` },
+  has(company.whatsapp) && { icon: 'MessageSquare', label: 'WhatsApp', value: company.whatsapp, href: `https://wa.me/${company.whatsapp.replace(/\D/g, '')}` },
+  has(company.supportEmail) && { icon: 'LifeBuoy', label: 'Soporte a clientes', value: company.supportEmail, href: `mailto:${company.supportEmail}` },
+].filter(Boolean) as { icon: string; label: string; value: string; href: string }[];
+---
+<Base title="Contacto y demostración" description="Solicita una demostración de Cumplido Salud o Cumplido Belleza, una cotización o escríbenos. Respondemos por el canal que prefieras.">
+  <PageHero
+    title="Hablemos de tu negocio"
+    lead="Pide una demostración de Cumplido Salud o Cumplido Belleza, o una cotización. Te respondemos por el canal que elijas."
+    crumbs={[{ href: '/contacto', label: 'Contacto' }]}
+  />
+
+  <section class="section">
+    <div class="wrap contact">
+      <aside class="side">
+        <h2>Qué pasa después</h2>
+        <ol class="next">
+          <li><strong>Recibimos tu solicitud</strong><span>Te mostramos un número de solicitud como constancia.</span></li>
+          <li><strong>Te contactamos</strong><span>Por el canal que elijas, para entender tu operación.</span></li>
+          <li><strong>Demostración y cotización</strong><span>Te mostramos el software y te enviamos la propuesta por escrito.</span></li>
+        </ol>
+        {channels.length > 0 && (
+          <div class="channels">
+            <h2>Otros canales</h2>
+            <ul>{channels.map((c) => <li><Icon name={c.icon} /><span><span class="muted small">{c.label}</span><a href={c.href}>{c.value}</a></span></li>)}</ul>
+          </div>
+        )}
+        <div class="notice notice--info">
+          <Icon name="ShieldCheck" />
+          <p>No escribas información de salud de pacientes en este formulario. Los datos clínicos solo se gestionan dentro de Cumplido Salud, con acceso autenticado.</p>
+        </div>
+      </aside>
+
+      <div class="form-card">
+        {!contactEndpoint && (
+          <div class="notice" role="note" data-no-endpoint>
+            <Icon name="CircleAlert" />
+            <p>El envío en línea se habilitará cuando el formulario quede conectado al sistema de solicitudes. Puedes revisar el formulario, pero todavía no se enviará.</p>
+          </div>
+        )}
+        <form novalidate data-contact data-endpoint={contactEndpoint ?? ''} data-aviso-version={avisoVersion} aria-describedby="form-req">
+          <p id="form-req" class="small muted">Los campos marcados con * son obligatorios.</p>
+          <div class="hp" aria-hidden="true">
+            <label for="website">No completes este campo</label>
+            <input id="website" name="website" type="text" tabindex="-1" autocomplete="off" />
+          </div>
+
+          <div class="row">
+            <div class="field">
+              <label for="name">Nombre *</label>
+              <input id="name" name="name" type="text" autocomplete="name" required maxlength={LIMITS.name} aria-describedby="name-err" />
+              <p class="err" id="name-err" data-err="name"></p>
+            </div>
+            <div class="field">
+              <label for="email">Correo electrónico *</label>
+              <input id="email" name="email" type="email" autocomplete="email" inputmode="email" required maxlength={LIMITS.email} aria-describedby="email-err" />
+              <p class="err" id="email-err" data-err="email"></p>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="field">
+              <label for="company">Empresa o negocio</label>
+              <input id="company" name="company" type="text" autocomplete="organization" maxlength={LIMITS.company} aria-describedby="company-err" />
+              <p class="err" id="company-err" data-err="company"></p>
+            </div>
+            <div class="field">
+              <label for="sector">Sector *</label>
+              <select id="sector" name="sector" required aria-describedby="sector-err">
+                <option value="">Elige una opción</option>
+                {SECTORS.map((s) => <option value={s}>{s}</option>)}
+              </select>
+              <p class="err" id="sector-err" data-err="sector"></p>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="reason">Motivo del contacto *</label>
+            <select id="reason" name="reason" required aria-describedby="reason-err">
+              <option value="">Elige una opción</option>
+              {REASONS.map((r) => <option value={r.value}>{r.label}</option>)}
+            </select>
+            <p class="err" id="reason-err" data-err="reason"></p>
+          </div>
+
+          <div class="field">
+            <label for="message">Mensaje *</label>
+            <textarea id="message" name="message" rows="5" required maxlength={LIMITS.message} aria-describedby="message-help message-err"></textarea>
+            <p class="help small" id="message-help"><span>Cuéntanos cuántos profesionales tienes y qué quieres organizar.</span><span data-count>0 / {LIMITS.message}</span></p>
+            <p class="err" id="message-err" data-err="message"></p>
+          </div>
+
+          <fieldset class="field">
+            <legend>¿Cómo prefieres que te respondamos? *</legend>
+            <div class="radios">
+              {CHANNELS.map((c, i) => (
+                <label class="radio"><input type="radio" name="channel" value={c.value} checked={i === 0} /><span>{c.label}</span></label>
+              ))}
+            </div>
+            <p class="err" data-err="channel"></p>
+          </fieldset>
+
+          <div class="field" data-phone hidden>
+            <label for="phone">Número de teléfono *</label>
+            <input id="phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" maxlength={LIMITS.phone} aria-describedby="phone-err" />
+            <p class="err" id="phone-err" data-err="phone"></p>
+          </div>
+
+          <div class="privacy small">
+            <p>
+              <strong>Aviso de privacidad.</strong> {has(company.legalName) ? company.legalName : 'El responsable del sitio'} usará tus datos para responder esta solicitud y, si la pides, preparar una demostración o cotización. Puedes conocer, actualizar, rectificar o suprimir tus datos y revocar la autorización. Consulta el <a href="/legal/aviso-de-privacidad">aviso de privacidad</a> y la <a href="/legal/tratamiento-de-datos">política de tratamiento de datos</a>.
+            </p>
+          </div>
+
+          <div class="checks">
+            <label class="check">
+              <input type="checkbox" name="privacyAccepted" aria-describedby="privacyAccepted-err" />
+              <span>Leí el aviso de privacidad y autorizo el tratamiento de mis datos para responder esta solicitud. *</span>
+            </label>
+            <p class="err" id="privacyAccepted-err" data-err="privacyAccepted"></p>
+            <label class="check">
+              <input type="checkbox" name="marketingOptIn" />
+              <span>Opcional: quiero recibir novedades y ofertas por correo. Puedo darme de baja cuando quiera.</span>
+            </label>
+          </div>
+
+          <p class="err form-err" role="alert" data-err="form"></p>
+          <button class="btn submit" type="submit" data-submit>
+            <span class="spinner" aria-hidden="true"></span><span data-submit-label>Enviar solicitud</span>
+          </button>
+        </form>
+
+        <div class="success" hidden tabindex="-1" data-success>
+          <span class="ok-ico"><Icon name="Check" /></span>
+          <h2>Recibimos tu solicitud</h2>
+          <p>Te contactaremos por el canal que elegiste.</p>
+          <p class="rid" data-rid-wrap hidden>Número de solicitud: <strong data-rid></strong></p>
+          <a href="/" class="btn btn--ghost">Volver al inicio</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .contact { display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.3fr); gap: var(--s-12); align-items: start; }
+  .side h2 { font-size: var(--t-lg); }
+  .next { list-style: none; counter-reset: n; display: grid; gap: var(--s-5); margin-bottom: var(--s-10); }
+  .next li { counter-increment: n; display: grid; grid-template-columns: 32px 1fr; column-gap: var(--s-3); }
+  .next li::before { content: counter(n); grid-row: span 2; width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; font-size: var(--t-sm); font-weight: 700; color: var(--c-brand); border: 2px solid var(--c-brand); }
+  .next span { color: var(--ink-2); font-size: var(--t-sm); }
+  .channels { margin-bottom: var(--s-8); }
+  .channels ul { list-style: none; display: grid; gap: var(--s-4); }
+  .channels li { display: flex; gap: var(--s-3); }
+  .channels li > span { display: flex; flex-direction: column; }
+  .channels :global(.ico) { color: var(--c-brand); margin-top: 4px; }
+
+  .form-card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-xl); padding: var(--s-8); box-shadow: var(--shadow-1); }
+  .form-card > .notice { margin-bottom: var(--s-6); }
+  form { display: grid; gap: var(--s-5); }
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s-5); }
+  .field { display: grid; gap: 6px; min-width: 0; border: 0; padding: 0; margin: 0; }
+  .field[hidden] { display: none; }
+  label, legend { font-weight: 600; font-size: var(--t-sm); color: var(--ink); }
+  legend { margin-bottom: 6px; padding: 0; }
+  input[type='text'], input[type='email'], input[type='tel'], select, textarea {
+    width: 100%; font: inherit; font-size: 1rem; color: var(--ink); background: var(--bg);
+    border: 1px solid var(--line-strong); border-radius: var(--r-md); padding: 11px 13px; min-height: 46px;
+    transition: border-color .15s, box-shadow .15s;
+  }
+  textarea { resize: vertical; min-height: 130px; }
+  input:focus, select:focus, textarea:focus { outline: none; border-color: var(--c-brand); box-shadow: 0 0 0 3px color-mix(in srgb, var(--c-brand) 25%, transparent); }
+  [aria-invalid='true'] { border-color: var(--err) !important; }
+  .err { color: var(--err); font-size: var(--t-sm); margin: 0; min-height: 0; }
+  .err:empty { display: none; }
+  .help { display: flex; justify-content: space-between; gap: var(--s-4); color: var(--ink-3); margin: 0; }
+  .radios { display: flex; flex-wrap: wrap; gap: var(--s-2); }
+  .radio { position: relative; }
+  .radio input { position: absolute; opacity: 0; inset: 0; cursor: pointer; margin: 0; }
+  .radio span { display: inline-block; padding: 9px 14px; border-radius: var(--r-md); border: 1px solid var(--line-strong); font-weight: 500; background: var(--bg); }
+  .radio input:checked + span { border-color: var(--c-brand); background: var(--c-brand-soft); color: var(--c-brand); font-weight: 600; }
+  .radio input:focus-visible + span { outline: 3px solid var(--focus); outline-offset: 2px; }
+  .privacy { background: var(--surface-2); border: 1px solid var(--line); border-radius: var(--r-md); padding: var(--s-4); color: var(--ink-2); }
+  .privacy p { margin: 0; }
+  .checks { display: grid; gap: var(--s-3); }
+  .check { display: flex; gap: var(--s-3); align-items: flex-start; font-weight: 400; color: var(--ink-2); cursor: pointer; }
+  .check input { width: 20px; height: 20px; margin: 2px 0 0; flex: none; accent-color: var(--c-brand); }
+  .hp { position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
+  .submit { justify-self: start; min-width: 200px; }
+  .spinner { display: none; width: 16px; height: 16px; border-radius: 50%; border: 2px solid currentColor; border-right-color: transparent; animation: spin .7s linear infinite; }
+  .submit[aria-busy='true'] .spinner { display: inline-block; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .success { text-align: center; padding: var(--s-10) var(--s-4); animation: pop .4s cubic-bezier(.2, .9, .3, 1.2); }
+  .ok-ico { display: inline-grid; place-items: center; width: 60px; height: 60px; border-radius: 50%; background: color-mix(in srgb, var(--c-health) 14%, transparent); color: var(--c-health-ink); margin-bottom: var(--s-5); }
+  .ok-ico :global(.ico) { width: 30px; height: 30px; }
+  .rid { font-size: var(--t-md); }
+  @keyframes pop { from { opacity: 0; transform: scale(.96); } to { opacity: 1; transform: none; } }
+  @media (max-width: 900px) { .contact { grid-template-columns: 1fr; } .side { order: 2; } }
+  @media (max-width: 600px) { .row { grid-template-columns: 1fr; } .form-card { padding: var(--s-5); } .submit { justify-self: stretch; } }
+</style>
+
+<script>
+  import { validateContact, toPayload, type ContactInput } from '../lib/contact';
+
+  const form = document.querySelector<HTMLFormElement>('[data-contact]')!;
+  const endpoint = form.dataset.endpoint || '';
+  const avisoVersion = form.dataset.avisoVersion || '';
+  const startedAt = Date.now();
+  const phoneField = form.querySelector<HTMLElement>('[data-phone]')!;
+  const submit = form.querySelector<HTMLButtonElement>('[data-submit]')!;
+  const submitLabel = form.querySelector<HTMLElement>('[data-submit-label]')!;
+  const count = form.querySelector<HTMLElement>('[data-count]')!;
+  const msg = form.elements.namedItem('message') as HTMLTextAreaElement;
+  const COOLDOWN_KEY = 'contact-last-sent';
+
+  // Prefill desde la URL (?motivo=demo&sector=salud&plan=basico)
+  const qs = new URLSearchParams(location.search);
+  const reasonSel = form.elements.namedItem('reason') as HTMLSelectElement;
+  const motivo = qs.get('motivo');
+  if (motivo && [...reasonSel.options].some((o) => o.value === motivo)) reasonSel.value = motivo;
+  const productNames: Record<string, string> = { salud: 'Cumplido Salud', belleza: 'Cumplido Belleza' };
+  const product = productNames[qs.get('producto') ?? ''];
+  const plan = qs.get('plan');
+  const planNames: Record<string, string> = { basico: 'Básico', profesional: 'Profesional', empresarial: 'Empresarial' };
+  const parts: string[] = [];
+  if (motivo === 'demo' && product) parts.push(`Quiero una demostración de ${product}.`);
+  if (plan && planNames[plan]) parts.push(`Me interesa cotizar el plan ${planNames[plan]}${product ? ` de ${product}` : ''}.`);
+  if (parts.length) msg.value = parts.join(' ') + ' ';
+
+  const updateCount = () => (count.textContent = `${msg.value.length} / ${msg.maxLength}`);
+  msg.addEventListener('input', updateCount);
+  updateCount();
+
+  const syncPhone = () => {
+    const ch = (form.elements.namedItem('channel') as RadioNodeList).value;
+    phoneField.hidden = ch === 'email';
+  };
+  form.addEventListener('change', (e) => { if ((e.target as HTMLInputElement).name === 'channel') syncPhone(); });
+  syncPhone();
+
+  const read = (): ContactInput => {
+    const f = new FormData(form);
+    const s = (k: string) => String(f.get(k) ?? '');
+    return {
+      name: s('name'), email: s('email'), company: s('company'), sector: s('sector'), reason: s('reason'),
+      message: s('message'), channel: s('channel'), phone: s('phone'),
+      privacyAccepted: f.get('privacyAccepted') === 'on', marketingOptIn: f.get('marketingOptIn') === 'on',
+      website: s('website'), elapsedMs: Date.now() - startedAt,
+    };
+  };
+
+  const showErrors = (errors: Record<string, string | undefined>) => {
+    form.querySelectorAll<HTMLElement>('[data-err]').forEach((el) => {
+      const key = el.dataset.err!;
+      el.textContent = errors[key] ?? '';
+      const input = form.querySelector<HTMLElement>(`[name="${key}"]`);
+      if (input && input.getAttribute('type') !== 'radio') input.setAttribute('aria-invalid', errors[key] ? 'true' : 'false');
+    });
+  };
+
+  // Validación al salir del campo, solo después del primer intento
+  let attempted = false;
+  form.addEventListener('focusout', () => { if (attempted) showErrors(validateContact(read()) as Record<string, string>); });
+
+  const setBusy = (busy: boolean) => {
+    submit.setAttribute('aria-busy', String(busy));
+    submit.disabled = busy;
+    submitLabel.textContent = busy ? 'Enviando…' : 'Enviar solicitud';
+  };
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    attempted = true;
+    const data = read();
+    const errors = validateContact(data) as Record<string, string>;
+    showErrors(errors);
+    const firstKey = Object.keys(errors).find((k) => k !== 'form');
+    if (firstKey) { form.querySelector<HTMLElement>(`[name="${firstKey}"]`)?.focus(); return; }
+    if (errors.form) return;
+
+    let last = 0;
+    try { last = Number(localStorage.getItem(COOLDOWN_KEY) || 0); } catch {}
+    if (Date.now() - last < 60_000) { showErrors({ form: 'Ya recibimos una solicitud desde este navegador. Espera un minuto antes de enviar otra.' }); return; }
+
+    if (!endpoint) {
+      showErrors({ form: 'El formulario todavía no está conectado al sistema de solicitudes, así que no se envió. Inténtalo más adelante.' });
+      return;
+    }
+
+    setBusy(true);
+    try {
+      const res = await fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify(toPayload(data, avisoVersion)),
+        credentials: 'omit',
+        mode: 'cors',
+      });
+      if (res.status === 429) throw new Error('Recibimos muchas solicitudes seguidas. Espera unos minutos e inténtalo de nuevo.');
+      if (res.status === 422) {
+        const body = await res.json().catch(() => ({}));
+        if (body && typeof body.errors === 'object') { showErrors(body.errors); return; }
+      }
+      if (!res.ok) throw new Error('No pudimos enviar tu solicitud. Revisa tu conexión e inténtalo de nuevo.');
+      const body = await res.json().catch(() => ({}));
+      try { localStorage.setItem(COOLDOWN_KEY, String(Date.now())); } catch {}
+      const success = document.querySelector<HTMLElement>('[data-success]')!;
+      if (body && typeof body.id === 'string') {
+        success.querySelector<HTMLElement>('[data-rid]')!.textContent = body.id;
+        success.querySelector<HTMLElement>('[data-rid-wrap]')!.hidden = false;
+      }
+      form.hidden = true;
+      document.querySelector<HTMLElement>('[data-no-endpoint]')?.remove();
+      success.hidden = false;
+      success.focus();
+    } catch (err) {
+      const m = err instanceof Error && err.message.startsWith('No pudimos') || err instanceof Error && err.message.startsWith('Recibimos')
+        ? (err as Error).message
+        : 'No pudimos enviar tu solicitud. Revisa tu conexión e inténtalo de nuevo.';
+      showErrors({ form: m });
+    } finally {
+      setBusy(false);
+    }
+  });
+</script>

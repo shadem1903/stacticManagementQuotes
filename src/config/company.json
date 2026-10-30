@@ -1,0 +1,37 @@
+{
+  "$comment": "Datos corporativos. Un valor null significa PENDIENTE: el sitio lo oculta en páginas comerciales y lo marca en los documentos legales. No completar con datos de ejemplo. Ejecuta `npm run verify:legal` para ver qué falta.",
+  "brandName": "Cumplido",
+  "brandShort": "Cumplido",
+  "tagline": "Tu negocio, cumplido.",
+  "products": {
+    "salud": "Cumplido Salud",
+    "belleza": "Cumplido Belleza"
+  },
+  "legalName": null,
+  "legalForm": null,
+  "nit": null,
+  "address": null,
+  "city": null,
+  "country": "Colombia",
+  "commercialEmail": null,
+  "privacyEmail": null,
+  "securityEmail": null,
+  "supportEmail": null,
+  "phone": null,
+  "whatsapp": null,
+  "siteUrl": null,
+  "portalUrl": null,
+  "social": {
+    "instagram": null,
+    "facebook": null,
+    "linkedin": null,
+    "youtube": null
+  },
+  "hostingProvider": null,
+  "hostingRegion": null,
+  "about": {
+    "story": null,
+    "mission": null,
+    "vision": null
+  }
+}

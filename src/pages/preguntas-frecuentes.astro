@@ -1,0 +1,37 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import FaqList from '../components/FaqList.astro';
+import CtaBand from '../components/CtaBand.astro';
+import faqs from '../data/faqs.json';
+const ld = {
+  '@context': 'https://schema.org', '@type': 'FAQPage',
+  mainEntity: faqs.categories.flatMap((c) => c.items).map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
+};
+---
+<Base title="Preguntas frecuentes" description="Respuestas sobre contratación, planes, funcionalidades, configuración, soporte, seguridad, datos y cancelación." jsonLd={ld}>
+  <PageHero title="Preguntas frecuentes" lead="Contratación, producto, soporte y datos. Si tu duda no está aquí, escríbenos." crumbs={[{ href: '/preguntas-frecuentes', label: 'Preguntas frecuentes' }]}>
+    <nav aria-label="Categorías" class="cats">
+      {faqs.categories.map((c) => <a href={`#${c.id}`}>{c.title}</a>)}
+    </nav>
+  </PageHero>
+  <section class="section">
+    <div class="wrap">
+      {faqs.categories.map((c) => (
+        <section id={c.id} class="cat" aria-labelledby={`${c.id}-t`}>
+          <h2 id={`${c.id}-t`}>{c.title}</h2>
+          <FaqList items={c.items} />
+        </section>
+      ))}
+    </div>
+  </section>
+  <CtaBand title="¿Te quedó alguna duda?" text="Escríbenos y te respondemos por el canal que prefieras." />
+</Base>
+<style>
+  .cats { display: flex; flex-wrap: wrap; gap: var(--s-2); margin-top: var(--s-4); }
+  .cats a { padding: 6px 14px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); font-size: var(--t-sm); font-weight: 600; text-decoration: none; }
+  .cat { display: grid; grid-template-columns: minmax(0, .7fr) minmax(0, 1.6fr); gap: var(--s-10); }
+  .cat + .cat { margin-top: var(--s-16); }
+  .cat h2 { font-size: var(--t-xl); }
+  @media (max-width: 900px) { .cat { grid-template-columns: 1fr; gap: var(--s-2); } }
+</style>

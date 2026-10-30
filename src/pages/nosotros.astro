@@ -1,0 +1,59 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import CtaBand from '../components/CtaBand.astro';
+import { company, has } from '../lib/company';
+const { story, mission, vision } = company.about;
+const principles = [
+  { t: 'Decimos en qué estado está cada cosa', d: 'Marcamos cada funcionalidad como disponible, en desarrollo o planeada. No vendemos lo que todavía no existe.' },
+  { t: 'Una sola vez cada dato', d: 'Lo que se registra en la agenda alimenta los pagos, el inventario y los reportes, sin volver a escribirlo.' },
+  { t: 'Cada quien ve lo que necesita', d: 'Recepción no necesita la historia clínica; el contador no necesita la agenda. Los permisos se diseñan desde el inicio.' },
+  { t: 'Los datos de tus clientes son de tu empresa', d: 'Los tratamos por tu encargo y solo para prestar el servicio.' },
+];
+---
+<Base title="Nosotros" description="Qué estamos construyendo, para quién y cómo trabajamos.">
+  <PageHero
+    title="Hacemos el software que un consultorio o un salón necesita para cumplir"
+    lead="Negocios de salud y belleza comparten un problema: la agenda, los clientes, los pagos y el inventario están repartidos entre cuadernos, chats y hojas de cálculo. Estamos construyendo Cumplido: un software para consultorios y otro para salones, cada uno con todo lo que ese negocio necesita."
+    crumbs={[{ href: '/nosotros', label: 'Nosotros' }]}
+  />
+  {(has(story) || has(mission) || has(vision)) && (
+    <section class="section">
+      <div class="wrap prose">
+        {has(story) && (<><h2>Nuestra historia</h2><p>{story}</p></>)}
+        {has(mission) && (<><h2>Misión</h2><p>{mission}</p></>)}
+        {has(vision) && (<><h2>Visión</h2><p>{vision}</p></>)}
+      </div>
+    </section>
+  )}
+  <section class="section" aria-labelledby="pr-t">
+    <div class="wrap">
+      <div class="section-head"><h2 id="pr-t">Cómo trabajamos</h2></div>
+      <dl class="pr">
+        {principles.map((p) => <div><dt>{p.t}</dt><dd>{p.d}</dd></div>)}
+      </dl>
+    </div>
+  </section>
+  <section class="section section--surface" aria-labelledby="for-t">
+    <div class="wrap two">
+      <div>
+        <h2 id="for-t">Para quién</h2>
+        <p class="muted">Consultorios de odontología y fisioterapia, centros de bienestar, peluquerías, barberías, salones de belleza y servicios de manicura y pedicura, de uno o de muchos profesionales.</p>
+      </div>
+      <div>
+        <h2>En qué punto estamos</h2>
+        <p class="muted">Cumplido está en desarrollo. Puedes revisar el <a href="/funcionalidades">estado de cada funcionalidad</a> y pedir una demostración de lo que ya funciona.</p>
+      </div>
+    </div>
+  </section>
+  <CtaBand />
+</Base>
+<style>
+  .pr { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s-10) var(--s-12); margin: 0; }
+  .pr div { border-top: 2px solid var(--c-brand); padding-top: var(--s-5); }
+  .pr dt { font-weight: 700; font-size: var(--t-lg); letter-spacing: -0.015em; margin-bottom: var(--s-2); }
+  .pr dd { margin: 0; color: var(--ink-2); }
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s-12); }
+  .two h2 { font-size: var(--t-xl); }
+  @media (max-width: 800px) { .pr, .two { grid-template-columns: 1fr; } }
+</style>
