@@ -1,0 +1,43 @@
+---
+// Panel fotográfico. Sin `src` muestra un fondo de marca hasta tener fotos reales
+// (propias o con licencia) en public/fotos/. Ver docs/CONTENIDO.md.
+import Icon from './Icon.astro';
+interface Props { tone: 'salud' | 'belleza'; eyebrow: string; title: string; src?: string; alt?: string; href?: string; tall?: boolean }
+const { tone, eyebrow, title, src, alt = '', href, tall = false } = Astro.props;
+const Tag = href ? 'a' : 'div';
+---
+<Tag class:list={['ph', `ph--${tone}`, { tall, link: href }]} href={href}>
+  {src ? <img src={src} alt={alt} loading="lazy" decoding="async" /> : (
+    <span class="art" aria-hidden="true">
+      <span class="ring r1"></span><span class="ring r2"></span>
+      <span class="glyph"><Icon name={tone === 'salud' ? 'Tooth' : 'Scissors'} /></span>
+    </span>
+  )}
+  <span class="cap">
+    <span class="eb">{eyebrow}</span>
+    <span class="tt">{title}</span>
+  </span>
+</Tag>
+<style>
+  .ph { position: relative; display: block; height: 400px; border-radius: var(--r-lg); overflow: hidden; color: #fff; text-decoration: none; isolation: isolate;
+    transition: transform var(--dur-3) var(--ease-out), box-shadow var(--dur-3) var(--ease-out); }
+  .ph.tall { height: 460px; }
+  .ph--salud { background: linear-gradient(155deg, #0d5c52 0%, #0a3f3a 60%, #062a28 100%); }
+  .ph--belleza { background: linear-gradient(155deg, #8c1356 0%, #5e0c3a 60%, #3a0724 100%); }
+  .ph img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform 1.2s var(--ease-out); z-index: -1; }
+  .art { position: absolute; inset: 0; z-index: -1; }
+  .ring { position: absolute; border-radius: 50%; border: 1px solid rgb(255 255 255 / 14%); }
+  .r1 { width: 520px; height: 520px; right: -140px; top: -160px; }
+  .r2 { width: 340px; height: 340px; right: -50px; top: -70px; border-color: rgb(255 255 255 / 20%); }
+  .glyph { position: absolute; right: 64px; top: 64px; width: 120px; height: 120px; border-radius: 32px; display: grid; place-items: center; background: rgb(255 255 255 / 10%); color: rgb(255 255 255 / 85%); transition: transform 1.2s var(--ease-out); }
+  .glyph :global(.ico) { width: 56px; height: 56px; }
+  .cap { position: absolute; inset: auto 0 0 0; padding: 32px; background: linear-gradient(transparent, rgb(0 0 0 / 55%)); display: flex; flex-direction: column; gap: 6px; }
+  .eb { font-size: 13px; font-weight: 700; color: rgb(255 255 255 / 85%); }
+  .tt { font-size: clamp(1.4rem, 2.2vw, 1.75rem); font-weight: 800; letter-spacing: -.025em; line-height: 1.15; max-width: 24ch; }
+  @media (hover: hover) {
+    .ph.link:hover { transform: translateY(-4px); box-shadow: var(--shadow-3); }
+    .ph:hover img { transform: scale(1.05); }
+    .ph:hover .glyph { transform: rotate(-8deg) scale(1.06); }
+  }
+  @media (max-width: 640px) { .ph, .ph.tall { height: 320px; } .glyph { right: 28px; top: 28px; width: 88px; height: 88px; } .cap { padding: 24px; } }
+</style>

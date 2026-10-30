@@ -1,0 +1,30 @@
+---
+// Inventario con lotes y vencimientos (Cumplido Salud). Datos de ejemplo.
+const rows = [
+  ['Resina A2', 'L-2291', '12 mar 2027', '3', 'low'], ['Anestesia lidocaína', 'L-1874', '14 nov 2026', '18', 'soon'],
+  ['Guantes de nitrilo M', 'L-3302', 'Sin vencimiento', '6 cajas', ''], ['Electrodos adhesivos', 'L-0915', '2 dic 2026', '40', ''], ['Hilo dental', 'L-5521', 'Sin vencimiento', '2', 'low'],
+] as const;
+---
+<div class="inv" data-reveal role="img" aria-label="Ejemplo de inventario con lotes, vencimientos y alertas de stock bajo">
+  <div class="hd"><b>Inventario</b><span class="al">3 alertas</span></div>
+  <div class="tr th"><span>Insumo</span><span>Lote</span><span>Vence</span><span>Stock</span></div>
+  {rows.map(([n, l, e, q, st], i) => (
+    <div class="tr" style={`--i:${i}`}>
+      <b>{n}</b><span class="mut">{l}</span><span class:list={[{ warn: st === 'soon' }]}>{e}</span><span class:list={['q', { warn: st === 'low' }]}>{q}</span>
+    </div>
+  ))}
+</div>
+<style>
+  .inv { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-lg); box-shadow: 0 30px 60px -32px rgb(7 59 120 / 30%); overflow: hidden; }
+  .hd { padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--line); }
+  .al { font-size: 12.5px; color: var(--err); font-weight: 700; display: inline-flex; gap: 6px; align-items: center; }
+  .al::before { content: ''; width: 8px; height: 8px; border-radius: 50%; background: currentColor; animation: blink 1.6s ease-in-out infinite; }
+  .tr { display: grid; grid-template-columns: 2fr 1fr 1.3fr .9fr; gap: 8px; padding: 12px 20px; font-size: 14px; border-top: 1px solid var(--line); align-items: center; transition: background-color var(--dur-2); }
+  .tr:not(.th):hover { background: var(--surface-2); }
+  .th { border-top: 0; background: var(--surface-2); font-size: 12px; font-weight: 600; color: var(--ink-3); }
+  .mut { color: var(--ink-3); } .q { text-align: right; font-weight: 600; } .th span:last-child { text-align: right; }
+  .warn { color: var(--err); font-weight: 700; }
+  @keyframes blink { 50% { opacity: .35; } }
+  @media (prefers-reduced-motion: reduce) { .al::before { animation: none; } }
+  @media (max-width: 560px) { .tr { grid-template-columns: 1.6fr 1.2fr .8fr; padding: 12px 14px; font-size: 13px; } .tr > :nth-child(2) { display: none; } }
+</style>

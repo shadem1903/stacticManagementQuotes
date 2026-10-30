@@ -1,0 +1,57 @@
+---
+// Una cita y todo lo que dispara: recordatorio, atención, inventario, cobro, contabilidad.
+interface Step { time: string; title: string; text: string; chip: [string, string]; tone?: string }
+interface Props { steps?: Step[] }
+const def: Step[] = [
+  { time: '8:00 a. m.', title: 'El paciente confirma', text: 'El recordatorio sale solo, un día antes.', chip: ['Recordatorio enviado', 'Laura G.'] },
+  { time: '10:30 a. m.', title: 'Se atiende', text: 'El profesional registra la evolución en la historia.', chip: ['Llegó a recepción', 'En atención'], tone: 'ok' },
+  { time: '11:10 a. m.', title: 'Se descuenta inventario', text: 'Los insumos usados salen del stock.', chip: ['Resina A2', '−1 unidad'] },
+  { time: '11:15 a. m.', title: 'Se cobra', text: 'El pago entra a caja y actualiza el saldo.', chip: ['Abono con tarjeta', '$ 180.000'] },
+  { time: 'Al cierre', title: 'Las cuentas quedan hechas', text: 'Contabilidad y reportes al día.', chip: ['Utilidad del día', '$ 1.120.000'], tone: 'admin' },
+];
+const { steps = def } = Astro.props;
+---
+<div class="tl" data-reveal>
+  <span class="line grow-x" aria-hidden="true"></span>
+  <ol>
+    {steps.map((s, i) => (
+      <li style={`--k:${i}`}>
+        <span class="dot" aria-hidden="true">{i + 1}</span>
+        <span class="time">{s.time}</span>
+        <span class:list={['chip', s.tone]}><span>{s.chip[0]}</span><b>{s.chip[1]}</b></span>
+        <h3>{s.title}</h3>
+        <p>{s.text}</p>
+      </li>
+    ))}
+  </ol>
+</div>
+<style>
+  .tl { position: relative; }
+  .line { position: absolute; left: 22px; right: 22px; top: 21px; height: 2px; background: linear-gradient(90deg, var(--c-health), var(--c-brand), var(--c-admin)); opacity: .55; }
+  ol { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: var(--s-4); position: relative; }
+  li { display: flex; flex-direction: column; gap: var(--s-3); }
+  .dot { width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; background: var(--surface); border: 2px solid var(--c-brand); color: var(--c-brand); font-weight: 800; position: relative; z-index: 1; }
+  .time { font-size: 13px; font-weight: 700; color: var(--c-brand); margin-top: var(--s-2); }
+  .chip { display: grid; gap: 2px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-md); padding: 10px 12px; font-size: 12.5px; box-shadow: var(--shadow-1); transition: transform var(--dur-3) var(--ease-out), box-shadow var(--dur-3); }
+  .chip span { color: var(--ink-3); font-size: 12px; } .chip b { font-size: 13.5px; } .chip.ok b { color: var(--c-health-ink); } .chip.admin b { color: var(--c-admin-ink); }
+  li:hover .chip { transform: translateY(-3px); box-shadow: var(--shadow-2); }
+  h3 { margin: var(--s-2) 0 0; font-size: var(--t-base); }
+  p { margin: 0; font-size: var(--t-sm); color: var(--ink-2); line-height: 1.5; }
+  @media (prefers-reduced-motion: no-preference) {
+    :global(.js) .tl .dot { transform: scale(.4); opacity: 0; transition: transform 500ms var(--ease-spring), opacity 300ms; transition-delay: calc(150ms + var(--k) * 160ms); }
+    :global(.js) .tl:global(.is-in) .dot { transform: none; opacity: 1; }
+  }
+  @media (max-width: 1000px) and (prefers-reduced-motion: no-preference) {
+    :global(.js) .tl .line.grow-x { transform: scaleY(0); transform-origin: top; transition-duration: 1200ms; }
+    :global(.js) .tl:global(.is-in) .line.grow-x { transform: scaleY(1); }
+  }
+  @media (max-width: 1000px) {
+    ol { grid-template-columns: minmax(0, 1fr); gap: 0; }
+    .line { left: 21px; right: auto; top: 22px; bottom: 22px; width: 2px; height: auto; background: linear-gradient(var(--c-health), var(--c-brand), var(--c-admin)); }
+    li { display: grid; grid-template-columns: 44px minmax(0, 1fr); column-gap: var(--s-4); padding-bottom: var(--s-8); }
+    li > :not(.dot) { grid-column: 2; }
+    .dot { grid-row: 1 / span 4; }
+    .time { margin-top: 10px; }
+    .chip { max-width: 360px; }
+  }
+</style>

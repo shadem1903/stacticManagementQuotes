@@ -61,3 +61,13 @@ Para publicar una versión nueva:
 4. `npm run verify:legal` debe pasar.
 
 La aceptación de cada versión por los clientes (en la contratación) se registra en el backend, no en este sitio.
+
+## Fotos
+
+Los paneles fotográficos (`src/components/PhotoPanel.astro`) muestran un fondo de marca mientras no haya fotos. Para usar fotos reales:
+
+1. Copia las imágenes (propias o con licencia de uso comercial) a `public/fotos/`, en formato `.webp` o `.jpg`, de al menos 1600 px de ancho.
+2. Pásalas al componente: `<PhotoPanel tone="salud" src="/fotos/consultorio.webp" alt="Odontóloga atendiendo a una paciente" ... />`.
+3. Escribe un `alt` que describa la foto. No uses fotos de personas reales sin su autorización.
+
+Las pantallas del producto (agenda, odontograma, comisiones, caja) son ilustraciones con datos de ejemplo y lo dicen en la página. Cuando el software esté listo, conviene reemplazarlas por capturas reales.

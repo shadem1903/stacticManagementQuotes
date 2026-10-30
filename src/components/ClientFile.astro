@@ -1,0 +1,29 @@
+---
+// Ficha de una clienta (Cumplido Belleza). Datos de ejemplo.
+const last = [['Color y tratamiento', '11 oct'], ['Corte y peinado', '13 sep'], ['Semipermanente', '13 sep']];
+---
+<div class="cf" data-reveal role="img" aria-label="Ejemplo de ficha de clienta con fórmula de color, últimos servicios y preferencias">
+  <div class="hd">
+    <div class="who"><span class="av">VC</span><div><b>Valentina Castro</b><small>Clienta desde 2024 · 14 visitas</small></div></div>
+    <span class="tag">Le toca volver: 8 nov</span>
+  </div>
+  <div class="cards">
+    <div class="card"><span class="lb">Fórmula de color</span><p>7.1 + 8.1 (1:1) · Oxidante 20 vol · 35 min</p><div class="sw"><i style="background:#8c6e52"></i><i style="background:#a88a6c"></i><i style="background:#c9ae8f"></i></div></div>
+    <div class="card"><span class="lb">Últimos servicios</span>{last.map(([s, d]) => <div class="r"><span>{s}</span><span class="mut">{d}</span></div>)}</div>
+  </div>
+  <p class="note">Prefiere atención con Camila T. los sábados en la mañana. Sensible al olor del amoníaco.</p>
+</div>
+<style>
+  .cf { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-lg); box-shadow: 0 30px 60px -32px rgb(120 10 70 / 30%); padding: 22px; display: grid; gap: 16px; }
+  .hd { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; align-items: center; }
+  .who { display: flex; gap: 12px; align-items: center; } .who b { display: block; font-size: 16px; } .who small { font-size: 13px; color: var(--ink-3); }
+  .av { width: 46px; height: 46px; border-radius: 50%; background: #fde7f2; color: #b0156a; font-weight: 800; display: grid; place-items: center; }
+  .tag { font-size: 12.5px; font-weight: 700; color: var(--c-beauty-ink); background: color-mix(in srgb, var(--c-beauty) 12%, transparent); padding: 7px 12px; border-radius: var(--r-full); }
+  .cards { display: flex; flex-wrap: wrap; gap: 14px; }
+  .card { flex: 1 1 220px; border: 1px solid var(--line); border-radius: var(--r-md); padding: 14px 16px; font-size: 14px; display: grid; gap: 8px; }
+  .lb { font-size: 12px; font-weight: 700; color: var(--ink-3); } .card p { margin: 0; line-height: 1.6; }
+  .sw { display: flex; gap: 6px; } .sw i { width: 28px; height: 28px; border-radius: 8px; transition: transform var(--dur-3) var(--ease-spring); }
+  .sw i:hover { transform: translateY(-3px) scale(1.08); }
+  .r { display: flex; justify-content: space-between; gap: 8px; } .mut { color: var(--ink-3); }
+  .note { margin: 0; font-size: 13.5px; color: var(--ink-2); background: var(--surface-2); border-radius: var(--r-md); padding: 12px 14px; }
+</style>

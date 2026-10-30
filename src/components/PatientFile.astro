@@ -1,0 +1,62 @@
+---
+// Ficha de paciente de fisioterapia (Cumplido Salud). Datos de ejemplo.
+import Icon from './Icon.astro';
+const evo = [
+  ['Hoy · Andrés M.', 'Flexión 95°, dolor 3/10. Se agrega fortalecimiento de cuádriceps.', true],
+  ['22 oct · Andrés M.', 'Flexión 85°, dolor 5/10. Electroterapia y movilidad.', false],
+  ['15 oct · Valoración inicial', 'Postoperatorio de ligamento cruzado anterior.', false],
+] as const;
+const rom = [50, 62, 76, 90];
+---
+<div class="pf-wrap" aria-hidden="true">
+  <div class="pf" data-reveal>
+    <div class="hd">
+      <div class="who"><span class="av">JP</span><div><b>Jorge Pérez</b><small>52 años · Rehabilitación de rodilla</small></div></div>
+      <span class="tag">Sesión 4 de 10</span>
+    </div>
+    <div class="bd">
+      <div class="col evo">
+        <span class="lbl">Evolución</span>
+        <ol>{evo.map(([t, d, now], k) => <li style={`--i:${k}`}><span class:list={['dt', { now }]}></span><div><b>{t}</b><p>{d}</p></div></li>)}</ol>
+      </div>
+      <div class="col">
+        <span class="lbl">Rango de movimiento</span>
+        <div class="rom">{rom.map((h, k) => <span class="grow-y" style={`height:${h}%;--k:${k};opacity:${0.35 + k * 0.2}`}></span>)}</div>
+        <div class="box"><div><span>Paquete</span><b>10 sesiones</b></div><div><span>Saldo</span><b>$ 420.000</b></div></div>
+        <span class="lock"><Icon name="Lock" />Solo visible con permiso clínico</span>
+      </div>
+    </div>
+  </div>
+  <div class="float"><span class="fi"><Icon name="FileText" /></span><span><b>Consentimiento firmado</b><small>Electroterapia · hoy 9:12</small></span></div>
+</div>
+<style>
+  .pf-wrap { position: relative; }
+  .pf { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-lg); box-shadow: 0 40px 80px -36px rgb(0 80 64 / 40%); overflow: hidden; animation: up 800ms var(--ease-out) 150ms both; }
+  .hd { padding: 18px 22px; border-bottom: 1px solid var(--line); display: flex; flex-wrap: wrap; gap: 14px; justify-content: space-between; align-items: center; }
+  .who { display: flex; gap: 12px; align-items: center; } .who b { display: block; font-size: 16px; } .who small { font-size: 13px; color: var(--ink-3); }
+  .av { width: 46px; height: 46px; border-radius: 50%; background: #dcebff; color: #0b4a91; font-weight: 800; display: grid; place-items: center; }
+  .tag { font-size: 12.5px; font-weight: 700; color: var(--c-health-ink); background: color-mix(in srgb, var(--c-health) 14%, transparent); padding: 7px 12px; border-radius: var(--r-full); }
+  .bd { display: flex; flex-wrap: wrap; }
+  .col { flex: 1 1 220px; padding: 20px 22px; display: grid; gap: 14px; align-content: start; min-width: 0; }
+  .evo { flex-basis: 260px; border-right: 1px solid var(--line); }
+  .lbl { font-size: 12px; font-weight: 700; color: var(--ink-3); }
+  ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; }
+  li { display: grid; grid-template-columns: 14px 1fr; gap: 10px; font-size: 13.5px; }
+  li b { font-size: 13px; } li p { margin: 2px 0 0; color: var(--ink-2); line-height: 1.5; }
+  .dt { width: 10px; height: 10px; border-radius: 50%; background: #b9c6d8; margin-top: 5px; }
+  .dt.now { background: var(--c-health); box-shadow: 0 0 0 0 color-mix(in srgb, var(--c-health) 50%, transparent); animation: pulse 2s ease-out 1.2s 3; }
+  .rom { display: flex; align-items: flex-end; gap: 8px; height: 90px; }
+  .rom span { flex: 1; background: var(--c-health); border-radius: 6px 6px 0 0; }
+  .box { border: 1px solid var(--line); border-radius: var(--r-md); padding: 12px; display: grid; gap: 6px; font-size: 13.5px; }
+  .box div { display: flex; justify-content: space-between; }
+  .lock { display: flex; gap: 8px; align-items: center; font-size: 12.5px; color: var(--c-health-ink); font-weight: 600; }
+  .lock :global(.ico) { width: 16px; height: 16px; }
+  .float { position: absolute; left: -24px; bottom: -28px; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px; display: flex; gap: 10px; align-items: center; box-shadow: var(--shadow-3); font-size: 12.5px; animation: pop 700ms var(--ease-spring) 1.1s both; }
+  .float b { display: block; } .float small { color: var(--ink-3); font-size: 12px; }
+  .fi { width: 34px; height: 34px; border-radius: 10px; background: var(--c-brand-soft); color: var(--c-brand); display: grid; place-items: center; }
+  .fi :global(.ico) { width: 18px; height: 18px; }
+  @keyframes up { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: none; } }
+  @keyframes pop { from { opacity: 0; transform: translateY(14px) scale(.92); } to { opacity: 1; transform: none; } }
+  @keyframes pulse { to { box-shadow: 0 0 0 10px transparent; } }
+  @media (max-width: 640px) { .float { left: 8px; bottom: -36px; } .evo { border-right: 0; border-bottom: 1px solid var(--line); } }
+</style>

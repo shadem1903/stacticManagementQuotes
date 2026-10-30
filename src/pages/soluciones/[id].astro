@@ -3,10 +3,14 @@ import Base from '../../layouts/Base.astro';
 import Icon from '../../components/Icon.astro';
 import Logo from '../../components/Logo.astro';
 import Status from '../../components/Status.astro';
-import AgendaDemo from '../../components/AgendaDemo.astro';
+import PatientFile from '../../components/PatientFile.astro';
+import SalonAgenda from '../../components/SalonAgenda.astro';
+import InventoryTable from '../../components/InventoryTable.astro';
+import PatientPhone from '../../components/PatientPhone.astro';
+import ClientFile from '../../components/ClientFile.astro';
+import PhotoPanel from '../../components/PhotoPanel.astro';
 import PlanCards from '../../components/PlanCards.astro';
 import FaqList from '../../components/FaqList.astro';
-import CtaBand from '../../components/CtaBand.astro';
 import { solutions, solutionList, type SolutionId } from '../../data/solutions';
 import features from '../../data/features.json';
 
@@ -15,6 +19,7 @@ export function getStaticPaths() {
 }
 
 const s = solutions[Astro.params.id as SolutionId];
+const isSalud = s.id === 'salud';
 const other = solutionList.find((x) => x.id !== s.id)!;
 const groups = features.groups
   .map((g) => ({ ...g, items: g.items.filter((f) => f.products.includes(s.id)) }))
@@ -25,7 +30,8 @@ const ld = [
 ];
 ---
 <Base title={s.seoTitle} description={s.seoDescription} jsonLd={ld}>
-  <div style={`--accent:${s.accent};--accent-ink:${s.accentInk}`}>
+  <div class={`prod-page prod-page--${s.id}`} style={`--accent:${s.accent};--accent-ink:${s.accentInk}`}>
+    <!-- Hero -->
     <section class="p-hero">
       <div class="wrap p-hero-in">
         <div class="copy">
@@ -35,24 +41,25 @@ const ld = [
           <Logo product={s.id} size={44} />
           <h1>{s.headline}</h1>
           <p class="lead">{s.intro}</p>
-          <ul class="aud" aria-label="Para">
-            {s.audience.map((a) => <li>{a}</li>)}
-          </ul>
+          <ul class="aud" aria-label="Para">{s.audience.map((a) => <li>{a}</li>)}</ul>
           <div class="actions">
             <a class="btn" href={`/contacto?motivo=demo&producto=${s.id}`}>Pedir demo de {s.name}</a>
-            <a class="btn btn--ghost" href="#incluye">Ver qué incluye</a>
+            <a class="btn btn--ghost" href="#planes">Ver planes</a>
           </div>
         </div>
-        <div class="visual"><AgendaDemo variant={s.id} /></div>
+        <div class="visual">{isSalud ? <PatientFile /> : <SalonAgenda />}</div>
       </div>
+      <p class="wrap note small">Pantallas ilustrativas con datos de ejemplo.</p>
     </section>
 
-    <section class="section section--surface" aria-labelledby="needs-t">
+    <!-- Problemas -->
+    <section class="section" aria-labelledby="needs-t">
       <div class="wrap">
-        <div class="section-head"><h2 id="needs-t">Lo que resuelve en tu {s.id === 'salud' ? 'consultorio' : 'salón'}</h2></div>
+        <div class="section-head"><h2 id="needs-t">Lo que deja de pasar en tu {isSalud ? 'consultorio' : 'salón'}</h2></div>
         <div class="needs" data-reveal>
           {s.needs.map((n) => (
             <div class="need">
+              <span class="ni"><Icon name="Check" /></span>
               <h3>{n.title}</h3>
               <p>{n.text}</p>
             </div>
@@ -61,17 +68,49 @@ const ld = [
       </div>
     </section>
 
-    <section class="section" aria-labelledby="flow-t">
-      <div class="wrap">
-        <div class="section-head"><h2 id="flow-t">Un día con {s.name}</h2><p>Desde que se agenda la cita hasta que las cuentas quedan hechas.</p></div>
-        <ol class="flow" data-reveal>
-          {s.workflow.map((w, i) => (
-            <li><span class="flow-n" aria-hidden="true">{i + 1}</span><div><h3>{w.title}</h3><p>{w.text}</p></div></li>
-          ))}
-        </ol>
-      </div>
-    </section>
+    <!-- Filas de producto -->
+    {isSalud ? (
+      <>
+        <section class="section section--tight" aria-labelledby="row1-t">
+          <div class="wrap row">
+            <div class="row-copy">
+              <h2 id="row1-t">Insumos bajo control, procedimiento por procedimiento.</h2>
+              <p class="lead">Cada procedimiento descuenta lo que usa. Sabes qué se está acabando y qué vence este mes.</p>
+            </div>
+            <div class="row-visual"><InventoryTable /></div>
+          </div>
+        </section>
+        <section class="section" aria-labelledby="row2-t">
+          <div class="wrap row row--rev">
+            <div class="row-copy">
+              <h2 id="row2-t">Tus pacientes reservan y confirman desde el celular.</h2>
+              <p class="lead">Ven su próxima cita, el avance de su tratamiento y lo que deben. Menos llamadas a recepción.</p>
+              <p class="small muted">App en desarrollo.</p>
+            </div>
+            <div class="row-visual"><PatientPhone /></div>
+          </div>
+        </section>
+      </>
+    ) : (
+      <>
+        <section class="section section--tight" aria-labelledby="row1-t">
+          <div class="wrap row">
+            <div class="row-copy">
+              <h2 id="row1-t">Recuerda a cada clienta como si fuera la única.</h2>
+              <p class="lead">La fórmula de su color, sus preferencias y cuándo le toca volver, a la vista de quien la atiende.</p>
+            </div>
+            <div class="row-visual"><ClientFile /></div>
+          </div>
+        </section>
+        <section class="section" aria-label="Cumplido Belleza en el salón">
+          <div class="wrap" data-reveal>
+            <PhotoPanel tone="belleza" eyebrow="Cumplido Belleza" title="Cada silla con su agenda. Cada servicio con su precio y su comisión." tall />
+          </div>
+        </section>
+      </>
+    )}
 
+    <!-- Qué incluye -->
     <section class="section section--surface" id="incluye" aria-labelledby="feat-t">
       <div class="wrap">
         <div class="section-head"><h2 id="feat-t">Todo lo que incluye {s.name}</h2><p>Con el estado real de cada módulo. La administración y la contabilidad vienen incluidas, sin costo aparte.</p></div>
@@ -91,96 +130,137 @@ const ld = [
       </div>
     </section>
 
-    <section class="section" aria-labelledby="roles-t">
+    <!-- Un día + roles -->
+    <section class="section" aria-labelledby="flow-t">
+      <div class="wrap">
+        <div class="section-head"><h2 id="flow-t">Un día con {s.name}</h2><p>Desde que se agenda la cita hasta que las cuentas quedan hechas.</p></div>
+        <ol class="flow" data-reveal>
+          {s.workflow.map((w, i) => (
+            <li><span class="flow-n" aria-hidden="true">{i + 1}</span><h3>{w.title}</h3><p>{w.text}</p></li>
+          ))}
+        </ol>
+      </div>
+    </section>
+
+    <section class="section section--surface" aria-labelledby="roles-t">
       <div class="wrap two">
         <div>
-          <h2 id="roles-t">Quién usa qué</h2>
-          <p class="muted">Cada persona entra con su rol y solo ve lo que necesita.</p>
-          <dl class="roles">
+          <h2 id="roles-t">Cada quien ve lo que necesita</h2>
+          <dl class="roles" data-reveal>
             {s.roles.map((r) => (<div><dt>{r.name}</dt><dd>{r.can}</dd></div>))}
           </dl>
         </div>
         <div>
           <h2>Lo que conviene saber</h2>
-          <p class="muted">Para que decidas con información completa.</p>
-          <ul class="limits">
-            {s.limits.map((l) => <li><Icon name="Info" />{l}</li>)}
-          </ul>
-          <div class="other">
-            <p>¿Tu negocio es {other.id === 'belleza' ? 'un salón de belleza' : 'un consultorio de salud'}?</p>
-            <a class="link-touch" href={`/soluciones/${other.id}`}>Conoce {other.name}</a>
-          </div>
+          <ul class="limits">{s.limits.map((l) => <li><Icon name="Info" />{l}</li>)}</ul>
+          <a class="other lift" href={`/soluciones/${other.id}`}>
+            <span>¿Tu negocio es {other.id === 'belleza' ? 'un salón de belleza' : 'un consultorio de salud'}?</span>
+            <strong>Conoce {other.name}</strong>
+          </a>
         </div>
       </div>
     </section>
 
-    <section class="section section--surface" aria-labelledby="plans-t">
+    <section class="section" id="planes" aria-labelledby="plans-t">
       <div class="wrap">
         <div class="section-head"><h2 id="plans-t">Planes de {s.name}</h2><p>Según el número de usuarios. Precios por cotización.</p></div>
         <PlanCards product={s.id} />
       </div>
     </section>
 
-    <section class="section" aria-labelledby="faq-t">
+    <section class="section section--surface" aria-labelledby="faq-t">
       <div class="wrap">
         <div class="section-head"><h2 id="faq-t">Preguntas sobre {s.name}</h2></div>
         <FaqList items={s.faqs} />
       </div>
     </section>
-  </div>
 
-  <CtaBand title={`Mira ${s.name} funcionando`} />
+    <section class="section">
+      <div class="wrap">
+        <div class="cta" data-reveal>
+          <div class="cta-copy">
+            <h2>Mira {s.name} con los datos de un {isSalud ? 'consultorio' : 'salón'} como el tuyo.</h2>
+            <p>Demostración sin compromiso y cotización por escrito.</p>
+          </div>
+          <a class="btn btn--light" href={`/contacto?motivo=demo&producto=${s.id}`}>Pedir demo de {s.name}</a>
+        </div>
+      </div>
+    </section>
+  </div>
 </Base>
 
 <style>
-  .p-hero { position: relative; padding: var(--s-12) 0 var(--s-20); border-bottom: 1px solid var(--line);
-    background: linear-gradient(160deg, color-mix(in srgb, var(--accent) 9%, transparent), transparent 55%); }
-  .p-hero-in { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); gap: var(--s-16); align-items: center; }
-  .copy h1 { font-size: clamp(2rem, 3.8vw, 3rem); max-width: 18ch; margin-top: var(--s-6); }
+  .p-hero { padding: var(--s-12) 0 var(--s-12); border-bottom: 1px solid var(--line); background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 12%, var(--bg)) 0%, var(--bg) 100%); }
+  .p-hero-in { display: grid; grid-template-columns: minmax(0, .95fr) minmax(0, 1.05fr); gap: var(--s-16); align-items: center; }
+  .copy { animation: rise 800ms var(--ease-out) both; }
+  .copy h1 { font-size: clamp(2.1rem, 4.2vw, 3.5rem); line-height: 1.04; letter-spacing: -.04em; font-weight: 800; max-width: 17ch; margin-top: var(--s-6); }
   .copy :global(.logo-text) { font-size: 1.6rem; }
   .crumbs ol { list-style: none; display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: var(--s-6); color: var(--ink-3); }
   .crumbs li + li::before { content: '/'; margin-right: 6px; color: var(--line-strong); }
   .crumbs a { color: var(--ink-3); text-decoration: none; }
   .crumbs a:hover { color: var(--c-brand); text-decoration: underline; }
-  .aud { list-style: none; display: flex; flex-wrap: wrap; gap: var(--s-2); margin: 0 0 var(--s-8); }
-  .aud li { font-size: var(--t-sm); font-weight: 600; padding: 5px 12px; border-radius: 999px; background: var(--surface); border: 1px solid var(--line); }
+  .aud { list-style: none; display: flex; flex-wrap: wrap; gap: var(--s-2); margin: var(--s-6) 0 var(--s-8); }
+  .aud li { font-size: var(--t-sm); font-weight: 600; padding: 6px 14px; border-radius: var(--r-full); background: var(--surface); border: 1px solid color-mix(in srgb, var(--accent) 25%, var(--line)); }
   .actions { display: flex; gap: var(--s-3); flex-wrap: wrap; }
-  @media (max-width: 1100px) { .p-hero-in { grid-template-columns: minmax(0, 1fr); gap: var(--s-12); } .copy, .visual { max-width: 680px; } }
-  @media (max-width: 520px) { .actions .btn { flex: 1 1 100%; } .p-hero { padding-top: var(--s-8); } }
+  .note { color: var(--ink-3); text-align: right; margin: var(--s-12) auto 0; }
+  @keyframes rise { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
+  @media (max-width: 1100px) { .p-hero-in { grid-template-columns: minmax(0, 1fr); gap: var(--s-12); } .copy, .visual { max-width: 700px; } .note { text-align: left; } }
+  @media (max-width: 520px) { .actions .btn { flex: 1 1 100%; } }
 
-  .needs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-10) var(--s-12); }
-  .need { border-top: 2px solid var(--accent); padding-top: var(--s-5); }
-  .need h3 { font-size: var(--t-lg); }
-  .need p { color: var(--ink-2); margin: 0; }
-  .flow { list-style: none; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: var(--s-4); }
-  .flow li { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-lg); padding: var(--s-5); transition: border-color var(--dur-2), transform var(--dur-3) var(--ease-out); }
-  @media (hover: hover) { .flow li:hover { border-color: var(--accent); transform: translateY(-2px); } }
-  .flow-n { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; background: var(--surface); border: 2px solid var(--accent); color: var(--ink); font-weight: 700; font-size: var(--t-sm); margin-bottom: var(--s-4); }
-  .flow h3 { font-size: var(--t-base); margin-bottom: var(--s-2); }
-  .flow p { margin: 0; font-size: var(--t-sm); color: var(--ink-2); }
+  .needs { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--s-5); }
+  .need { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-lg); padding: var(--s-6); transition: transform var(--dur-3) var(--ease-out), box-shadow var(--dur-3), border-color var(--dur-2); }
+  .need:hover { transform: translateY(-3px); box-shadow: var(--shadow-2); border-color: color-mix(in srgb, var(--accent) 40%, var(--line)); }
+  .ni { width: 44px; height: 44px; border-radius: var(--r-md); display: grid; place-items: center; color: var(--accent-ink); background: color-mix(in srgb, var(--accent) 13%, transparent); }
+  .need h3 { margin: var(--s-4) 0 var(--s-2); font-size: var(--t-md); }
+  .need p { margin: 0; color: var(--ink-2); font-size: var(--t-sm); line-height: 1.55; }
+  @media (max-width: 1000px) { .needs { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 560px) { .needs { grid-template-columns: minmax(0, 1fr); } }
+
+  .row { display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); gap: var(--s-16); align-items: center; }
+  .row--rev .row-copy { order: 2; }
+  .row h2 { font-size: clamp(1.7rem, 2.8vw, 2.25rem); letter-spacing: -.03em; font-weight: 800; }
+  @media (max-width: 900px) { .row { grid-template-columns: minmax(0, 1fr); gap: var(--s-8); } .row--rev .row-copy { order: 0; } }
+
   .fgroup + .fgroup { margin-top: var(--s-12); }
   .gtitle { font-size: var(--t-lg); padding-bottom: var(--s-3); border-bottom: 2px solid var(--accent); }
   .gtitle.admin { border-color: var(--c-admin); }
   .flist { list-style: none; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 var(--s-10); }
   .flist li { display: flex; gap: var(--s-4); padding: var(--s-5) 0; border-bottom: 1px solid var(--line); }
-  .fi { width: 40px; height: 40px; flex: none; border-radius: var(--r-md); display: grid; place-items: center; color: var(--accent-ink); background: color-mix(in srgb, var(--accent) 12%, transparent); }
+  .fi { width: 40px; height: 40px; flex: none; border-radius: var(--r-md); display: grid; place-items: center; color: var(--accent-ink); background: color-mix(in srgb, var(--accent) 12%, transparent); transition: transform var(--dur-3) var(--ease-spring); }
+  .flist li:hover .fi { transform: rotate(-6deg) scale(1.08); }
   .fi.admin { color: var(--c-admin-ink); background: color-mix(in srgb, var(--c-admin) 12%, transparent); }
   .ft { display: flex; flex-wrap: wrap; gap: var(--s-2) var(--s-3); align-items: center; margin-bottom: 4px; }
   .ft h4 { margin: 0; font-size: var(--t-base); }
   .flist p { margin: 0; color: var(--ink-2); font-size: var(--t-sm); }
+  @media (max-width: 800px) { .flist { grid-template-columns: minmax(0, 1fr); } }
+
+  .flow { list-style: none; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: var(--s-4); }
+  .flow li { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-lg); padding: var(--s-5); transition: border-color var(--dur-2), transform var(--dur-3) var(--ease-out); }
+  .flow li:hover { border-color: var(--accent); transform: translateY(-2px); }
+  .flow-n { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; border: 2px solid var(--accent); color: var(--ink); font-weight: 700; font-size: var(--t-sm); margin-bottom: var(--s-4); }
+  .flow h3 { font-size: var(--t-base); margin-bottom: var(--s-2); }
+  .flow p { margin: 0; font-size: var(--t-sm); color: var(--ink-2); }
+  @media (max-width: 1000px) { .flow { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 520px) { .flow { grid-template-columns: minmax(0, 1fr); } }
+
   .two { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s-16); }
   .two h2 { font-size: var(--t-xl); }
   .roles { margin: var(--s-6) 0 0; }
   .roles div { padding: var(--s-4) 0; border-bottom: 1px solid var(--line); }
-  .roles dt { font-weight: 650; }
-  .roles dd { margin: 4px 0 0; color: var(--ink-2); font-size: var(--t-sm); }
+  .roles dt { font-weight: 650; } .roles dd { margin: 4px 0 0; color: var(--ink-2); font-size: var(--t-sm); }
   .limits { list-style: none; display: grid; gap: var(--s-3); margin: var(--s-6) 0; }
   .limits li { display: flex; gap: var(--s-3); color: var(--ink-2); font-size: var(--t-sm); }
-  .limits :global(.ico) { width: 18px; height: 18px; color: var(--ink-3); margin-top: 2px; }
-  .other { padding: var(--s-6); border-radius: var(--r-lg); background: var(--surface); border: 1px solid var(--line); }
-  .other p { margin: 0 0 var(--s-2); color: var(--ink-2); }
-  .other a { font-weight: 600; }
-  @media (max-width: 1000px) { .flow { grid-template-columns: 1fr 1fr; } }
-  @media (max-width: 800px) { .needs, .flist, .two { grid-template-columns: minmax(0, 1fr); } .two { gap: var(--s-12); } }
-  @media (max-width: 520px) { .flow { grid-template-columns: 1fr; } }
+  .limits :global(.ico) { width: 18px; height: 18px; color: var(--ink-3); margin-top: 2px; flex: none; }
+  .other { display: flex; flex-direction: column; gap: 4px; padding: var(--s-6); border-radius: var(--r-lg); background: var(--surface); border: 1px solid var(--line); text-decoration: none; color: var(--ink-2); }
+  .other strong { color: var(--c-brand); }
+  @media (max-width: 800px) { .two { grid-template-columns: minmax(0, 1fr); gap: var(--s-12); } }
+
+  .cta { border-radius: 28px; padding: clamp(32px, 5vw, 56px); display: flex; flex-wrap: wrap; gap: var(--s-8); align-items: center; justify-content: space-between; color: #fff; }
+  .prod-page--salud .cta { background: #00544a; }
+  .prod-page--belleza .cta { background: #7a0f49; }
+  .cta-copy { max-width: 600px; }
+  .cta h2 { color: #fff; font-size: clamp(1.6rem, 2.8vw, 2.3rem); letter-spacing: -.03em; font-weight: 800; }
+  .cta p { margin: 0; color: rgb(255 255 255 / 80%); font-size: var(--t-md); }
+  .cta :focus-visible { outline-color: #fff; }
+  @media (max-width: 520px) { .cta .btn { width: 100%; } }
 </style>

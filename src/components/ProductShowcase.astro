@@ -1,0 +1,209 @@
+---
+// Muestra los dos software con una pantalla real de cada uno: odontograma (Salud) y comisiones (Belleza).
+import Icon from './Icon.astro';
+const up = '18 17 16 15 14 13 12 11 21 22 23 24 25 26 27 28'.split(' ');
+const lo = '48 47 46 45 44 43 42 41 31 32 33 34 35 36 37 38'.split(' ');
+const upS: Record<string, string> = { '16': 'o', '14': 'c', '24': 't', '26': 'o', '18': 'a' };
+const loS: Record<string, string> = { '46': 'o', '36': 'c', '37': 't', '48': 'a' };
+const legend = [['s', 'Sana'], ['c', 'Caries'], ['o', 'Obturada'], ['t', 'En tratamiento'], ['a', 'Ausente']];
+const staff = [
+  ['CT', 'Camila T.', 'Estilista', 96, '$ 7.420.000', '$ 2.226.000', 'b'],
+  ['KR', 'Kevin R.', 'Barbero', 142, '$ 4.970.000', '$ 1.491.000', 'n'],
+  ['LP', 'Luisa P.', 'Manicurista', 118, '$ 3.540.000', '$ 1.062.000', 'v'],
+  ['DM', 'Daniela M.', 'Estilista', 74, '$ 5.180.000', '$ 1.554.000', 'h'],
+] as const;
+const salud = [
+  ['Historia clínica con odontograma', 'Marca cada pieza, registra la evolución por sesión y deja la firma del profesional. Solo la ve quien tiene permiso clínico.'],
+  ['Planes de tratamiento con saldo', 'Sesiones hechas, pendientes y lo que debe cada paciente.'],
+  ['Consentimientos informados', 'Asociados al paciente y al procedimiento, sin papel.'],
+  ['Insumos con lotes y vencimientos', 'Cada procedimiento descuenta lo que usa.'],
+];
+const belleza = [
+  ['Comisiones que se calculan solas', 'Cada servicio hecho y cobrado suma a la comisión de quien lo atendió. Se acabaron las cuentas a mano a fin de mes.'],
+  ['Agenda por estilista', 'Con la duración real de cada servicio, sin citas cruzadas.'],
+  ['Historial y preferencias', 'Qué se hizo, con qué productos y cuándo le toca volver.'],
+  ['Productos que avisan', 'El inventario descuenta lo que se usa en cada servicio.'],
+];
+---
+<div class="ps" data-ps>
+  <div class="ps-head">
+    <div>
+      <h2 id="productos-t">Dos software. Cada uno habla el idioma de tu negocio.</h2>
+      <p>Un consultorio no trabaja como un salón. Por eso no hay un sistema genérico: cada software trae lo que tu negocio necesita desde el primer día.</p>
+    </div>
+    <div class="seg" role="group" aria-label="Elegir software" data-seg>
+      <span class="seg-ind" aria-hidden="true"></span>
+      <button type="button" aria-pressed="true" aria-controls="ps-salud" data-show="salud" style="--accent: var(--c-health-ink)">Cumplido Salud</button>
+      <button type="button" aria-pressed="false" aria-controls="ps-belleza" data-show="belleza" style="--accent: var(--c-beauty-ink)">Cumplido Belleza</button>
+    </div>
+  </div>
+
+  <!-- Salud -->
+  <div class="panel" id="ps-salud" data-reveal style="--accent: var(--c-health); --accent-ink: var(--c-health-ink)">
+    <div class="feats">
+      {salud.map(([t, d], i) => (
+        <div class:list={['feat', { lead: i === 0 }]}><h3>{t}</h3><p>{d}</p></div>
+      ))}
+      <a class="more link-touch" href="/soluciones/salud">Conocer Cumplido Salud</a>
+    </div>
+    <div class="screen" aria-label="Ejemplo de historia clínica en Cumplido Salud" role="img">
+      <div class="sh">
+        <div class="who"><span class="av">LG</span><div><b>Laura Gómez</b><small>34 años · Ortodoncia, sesión 6 de 18</small></div></div>
+        <div class="chips"><span class="on">Odontograma</span><span>Evoluciones</span><span>Consentimientos</span></div>
+      </div>
+      <div class="odo">
+        <div class="arch">{up.map((n, k) => <div class="t"><small>{n}</small><span class={`tooth s-${upS[n] ?? 's'}`} style={`--k:${k}`}></span></div>)}</div>
+        <div class="mid"></div>
+        <div class="arch">{lo.map((n, k) => <div class="t"><span class={`tooth s-${loS[n] ?? 's'}`} style={`--k:${k + 16}`}></span><small>{n}</small></div>)}</div>
+        <div class="legend">{legend.map(([k, l]) => <span><i class={`tooth s-${k}`}></i>{l}</span>)}</div>
+      </div>
+      <div class="cards">
+        <div class="card"><small>Evolución de hoy</small><p>Ajuste de arco superior. Paciente refiere molestia leve en pieza 24. Próximo control en 4 semanas.</p><em>Firmado por Dra. Paula R. · 10:42</em></div>
+        <div class="card"><small>Plan de tratamiento</small><div class="row"><span>Sesiones</span><b>6 de 18</b></div><span class="meter"><span class="grow-x" style="width: 33%"></span></span><div class="row"><span>Saldo</span><b>$ 2.150.000</b></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Belleza -->
+  <div class="panel" id="ps-belleza" data-reveal hidden style="--accent: var(--c-beauty); --accent-ink: var(--c-beauty-ink)">
+    <div class="feats">
+      {belleza.map(([t, d], i) => (
+        <div class:list={['feat', { lead: i === 0 }]}><h3>{t}</h3><p>{d}</p></div>
+      ))}
+      <a class="more link-touch" href="/soluciones/belleza">Conocer Cumplido Belleza</a>
+    </div>
+    <div class="screen" aria-label="Ejemplo de comisiones en Cumplido Belleza" role="img">
+      <div class="sh">
+        <div><b class="st">Comisiones de octubre</b><small class="sub">Salón Bellas Artes · del 1 al 29 de octubre</small></div>
+        <span class="exp">Exportar</span>
+      </div>
+      <div class="table">
+        <div class="tr th"><span>Profesional</span><span>Servicios</span><span>Ventas</span><span>Comisión</span></div>
+        {staff.map(([ini, name, role, n, sales, com, c], i) => (
+          <div class="tr" style={`--i:${i}`}>
+            <span class="pro"><span class={`av av-${c}`}>{ini}</span><span><b>{name}</b><small>{role}</small></span></span>
+            <span>{n}</span><span>{sales}</span><b class="com">{com}</b>
+          </div>
+        ))}
+      </div>
+      <div class="cards">
+        <div class="card"><small>Servicio más vendido</small><b class="big">Color y tratamiento</b><span class="muted">86 servicios este mes</span></div>
+        <div class="card flex"><span class="ic"><Icon name="Package" /></span><div><b>Shampoo hidratante</b><span class="warn">Quedan 2 unidades: reponer</span></div></div>
+      </div>
+    </div>
+  </div>
+  <p class="note small">Pantallas ilustrativas con datos de ejemplo.</p>
+</div>
+
+<style>
+  .ps-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: var(--s-6); margin-bottom: var(--s-10); }
+  .ps-head > div { max-width: 660px; }
+  .ps-head h2 { font-size: clamp(2rem, 3.6vw, 2.9rem); letter-spacing: -.035em; font-weight: 800; }
+  .ps-head p { color: var(--ink-2); font-size: var(--t-md); margin: 0; }
+  .seg { position: relative; display: inline-flex; gap: 4px; padding: 5px; border-radius: var(--r-full); background: var(--surface); border: 1px solid var(--line); }
+  .seg button { position: relative; z-index: 1; min-height: 44px; padding: 0 18px; border: 0; background: transparent; border-radius: var(--r-full); font: 600 var(--t-sm)/1 var(--font); color: var(--ink-2); cursor: pointer; transition: color var(--dur-2); white-space: nowrap; }
+  .seg button[aria-pressed='true'] { color: var(--on-brand); }
+  .seg-ind { position: absolute; z-index: 0; top: 5px; bottom: 5px; left: 0; width: 0; border-radius: var(--r-full); background: var(--ind, var(--c-health-ink)); transition: transform var(--dur-3) var(--ease-out), width var(--dur-3) var(--ease-out), background-color var(--dur-3); }
+
+  .panel { display: flex; flex-wrap: wrap; gap: var(--s-8); align-items: stretch; }
+  .panel[hidden] { display: none; }
+  .panel:not([hidden]) { animation: panelIn 520ms var(--ease-out); }
+  @keyframes panelIn { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+  .feats { flex: 1 1 340px; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+  .feat { padding: var(--s-5) var(--s-6); border-radius: var(--r-lg); transition: background-color var(--dur-2); }
+  .feat:hover { background: var(--surface); }
+  .feat.lead { background: var(--surface); border: 1px solid var(--line); box-shadow: inset 4px 0 0 var(--accent); }
+  .feat h3 { margin: 0 0 6px; font-size: var(--t-md); }
+  .feat p { margin: 0; color: var(--ink-2); font-size: var(--t-base); line-height: 1.55; }
+  .more { margin: var(--s-3) var(--s-6) 0; }
+
+  .screen { flex: 1.6 1 540px; min-width: 0; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-lg); box-shadow: 0 30px 60px -30px rgb(7 59 120 / 35%); padding: var(--s-6); display: flex; flex-direction: column; gap: 18px; }
+  .sh { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; align-items: center; }
+  .who { display: flex; gap: 12px; align-items: center; }
+  .who b, .st { display: block; font-size: 16px; } .who small, .sub { display: block; font-size: 13px; color: var(--ink-3); }
+  .av { width: 44px; height: 44px; border-radius: 50%; background: #dcebff; color: #0b4a91; font-weight: 800; display: grid; place-items: center; flex: none; font-size: 14px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; font-size: 12.5px; font-weight: 600; }
+  .chips span { padding: 7px 12px; border-radius: var(--r-full); color: var(--ink-2); border: 1px solid var(--line); }
+  .chips .on { background: var(--c-brand-soft); color: var(--c-brand); border-color: transparent; }
+  .odo { background: var(--surface-2); border: 1px solid var(--line); border-radius: var(--r-md); padding: 18px 14px; }
+  .arch { display: grid; grid-template-columns: repeat(16, minmax(0, 1fr)); gap: 5px; }
+  .t { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .t small { font-size: 10px; color: var(--ink-3); }
+  .tooth { display: block; width: 100%; max-width: 26px; height: 30px; border-radius: 7px 7px 10px 10px; border: 1.5px solid; }
+  .s-s { background: #fff; border-color: #b9c6d8; } .s-c { background: #e8505b; border-color: #e8505b; } .s-o { background: #3d7bd9; border-color: #3d7bd9; }
+  .s-t { background: #00a887; border-color: #00a887; } .s-a { background: #172b4d; border-color: #5e6c84; }
+  .mid { height: 1px; background: var(--line); margin: 12px 0; }
+  .legend { display: flex; flex-wrap: wrap; gap: 16px; margin-top: 14px; font-size: 12px; color: var(--ink-2); }
+  .legend span { display: flex; gap: 6px; align-items: center; } .legend i { width: 12px; height: 12px; border-radius: 3px; }
+  .cards { display: flex; flex-wrap: wrap; gap: 14px; }
+  .card { flex: 1 1 220px; border: 1px solid var(--line); border-radius: var(--r-md); padding: 14px 16px; font-size: 14px; }
+  .card small { display: block; font-size: 12px; color: var(--ink-3); margin-bottom: 6px; }
+  .card p { margin: 0; line-height: 1.55; } .card em { display: block; font-style: normal; font-size: 12px; color: var(--c-health-ink); font-weight: 600; margin-top: 8px; }
+  .row { display: flex; justify-content: space-between; }
+  .meter { display: block; height: 6px; border-radius: 9px; background: var(--c-brand-soft); margin: 8px 0; overflow: hidden; }
+  .meter span { display: block; height: 100%; background: #00a887; border-radius: inherit; }
+  .exp { font-size: 12.5px; font-weight: 600; padding: 8px 12px; border-radius: var(--r-sm); border: 1px solid var(--line); }
+  .table { border: 1px solid var(--line); border-radius: var(--r-md); overflow: hidden; }
+  .tr { display: grid; grid-template-columns: 2fr 1fr 1.3fr 1.3fr; gap: 8px; padding: 13px 16px; border-top: 1px solid var(--line); font-size: 14px; align-items: center; }
+  .tr > :last-child { text-align: right; }
+  .th { border-top: 0; background: var(--surface-2); font-size: 12px; font-weight: 600; color: var(--ink-3); }
+  .pro { display: flex; gap: 10px; align-items: center; min-width: 0; } .pro b { display: block; } .pro small { font-size: 12px; color: var(--ink-3); }
+  .pro .av { width: 34px; height: 34px; font-size: 12px; }
+  .av-b { background: #fde7f2; color: #b0156a; } .av-n { background: #eaf4ff; color: #0b4a91; } .av-v { background: #efeafb; color: #5530b0; } .av-h { background: #e3f7f2; color: #00745d; }
+  .com { color: var(--c-beauty-ink); }
+  .big { display: block; font-size: 16px; margin-bottom: 2px; } .muted { color: var(--ink-3); font-size: 13px; }
+  .flex { display: flex; gap: 12px; align-items: center; } .flex b { display: block; }
+  .ic { width: 38px; height: 38px; border-radius: 10px; background: #fde7f2; color: #b0156a; display: grid; place-items: center; flex: none; }
+  .warn { color: var(--c-beauty-ink); font-size: 13px; }
+  .note { color: var(--ink-3); margin: var(--s-4) 0 0; text-align: right; }
+
+  @media (prefers-reduced-motion: no-preference) {
+    :global(.js) .panel .tooth { opacity: 0; }
+    :global(.js) .panel:global(.is-in) .tooth { animation: tooth 460ms var(--ease-spring) both; animation-delay: calc(200ms + var(--k, 0) * 22ms); }
+    :global(.js) .panel .legend .tooth { opacity: 1; animation: none; }
+    :global(.js) .panel .tr:not(.th) { opacity: 0; }
+    :global(.js) .panel:global(.is-in) .tr:not(.th) { animation: rowIn 500ms var(--ease-out) both; animation-delay: calc(250ms + var(--i, 0) * 90ms); }
+  }
+  @keyframes tooth { from { opacity: 0; transform: translateY(-8px) scale(.7); } to { opacity: 1; transform: none; } }
+  @keyframes rowIn { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: none; } }
+
+  @media (max-width: 420px) {
+    .seg { display: flex; width: 100%; }
+    .seg button { flex: 1; padding: 0 8px; font-size: 13px; }
+  }
+  @media (max-width: 640px) {
+    .arch { gap: 2px; } .t small { font-size: 8px; }
+    .tooth { height: 22px; border-radius: 4px 4px 6px 6px; border-width: 1px; }
+    .screen { padding: var(--s-4); }
+    .tr { grid-template-columns: 1.6fr 1.1fr 1.1fr; font-size: 13px; padding: 12px; }
+    .tr > :nth-child(2) { display: none; }
+    .feat { padding: var(--s-4); }
+  }
+</style>
+
+<script>
+  // Cambia entre Salud y Belleza con un indicador que se desliza
+  const root = document.querySelector<HTMLElement>('[data-ps]');
+  if (root) {
+    const btns = Array.from(root.querySelectorAll<HTMLButtonElement>('[data-show]'));
+    const ind = root.querySelector<HTMLElement>('.seg-ind')!;
+    const move = (b: HTMLButtonElement) => {
+      ind.style.width = `${b.offsetWidth}px`;
+      ind.style.transform = `translateX(${b.offsetLeft}px)`;
+      ind.style.setProperty('--ind', getComputedStyle(b).getPropertyValue('--accent'));
+    };
+    const select = (b: HTMLButtonElement) => {
+      btns.forEach((x) => {
+        const on = x === b;
+        x.setAttribute('aria-pressed', String(on));
+        const panel = document.getElementById(x.getAttribute('aria-controls')!)!;
+        panel.hidden = !on;
+        if (on) panel.classList.add('is-in');
+      });
+      move(b);
+    };
+    btns.forEach((b) => b.addEventListener('click', () => select(b)));
+    move(btns[0]);
+    new ResizeObserver(() => move(btns.find((b) => b.getAttribute('aria-pressed') === 'true')!)).observe(root.querySelector('[data-seg]')!);
+  }
+</script>

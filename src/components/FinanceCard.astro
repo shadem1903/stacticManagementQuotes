@@ -1,0 +1,40 @@
+---
+// Tablero financiero de ejemplo: utilidad, ingresos vs gastos y caja.
+const months = [['May', 62, 44], ['Jun', 70, 46], ['Jul', 66, 50], ['Ago', 78, 52], ['Sep', 74, 48], ['Oct', 88, 50]] as const;
+---
+<div class="fin" data-reveal role="img" aria-label="Ejemplo de tablero financiero: utilidad del mes, ingresos y gastos de los últimos seis meses y caja del día">
+  <div class="head">
+    <div><small>Utilidad de octubre</small><b class="big" data-count="18460000" data-prefix="$ " data-dur="1400">$ 18.460.000</b><em>12% más que septiembre</em></div>
+    <div class="leg"><span><i class="inc"></i>Ingresos</span><span><i class="exp"></i>Gastos</span></div>
+  </div>
+  <div class="chart">
+    {months.map(([m, a, b], k) => (
+      <div class="mo"><span class="inc grow-y" style={`height:${a}%;--k:${k}`}></span><span class="exp grow-y" style={`height:${b}%;--k:${k}`}></span></div>
+    ))}
+  </div>
+  <div class="labels">{months.map(([m]) => <span>{m}</span>)}</div>
+  <div class="tiles">
+    <div><small>Caja hoy</small><b data-count="1840000" data-prefix="$ ">$ 1.840.000</b></div>
+    <div><small>Por cobrar</small><b data-count="6320000" data-prefix="$ ">$ 6.320.000</b></div>
+    <div><small>Gastos del mes</small><b data-count="9700000" data-prefix="$ ">$ 9.700.000</b></div>
+  </div>
+</div>
+<style>
+  .fin { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-lg); padding: var(--s-6); box-shadow: 0 30px 60px -30px rgb(60 30 140 / 35%); }
+  .head { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; align-items: flex-start; }
+  small { display: block; font-size: 13px; color: var(--ink-3); }
+  .big { display: block; font-size: clamp(1.6rem, 3vw, 2.1rem); font-weight: 800; letter-spacing: -.04em; font-variant-numeric: tabular-nums; }
+  em { font-style: normal; font-size: 13px; color: var(--c-health-ink); font-weight: 600; }
+  .leg { display: flex; gap: 16px; font-size: 12.5px; color: var(--ink-2); }
+  .leg span { display: flex; gap: 6px; align-items: center; } .leg i { width: 10px; height: 10px; border-radius: 3px; }
+  .inc { background: var(--c-brand); } .exp { background: #b9c6d8; }
+  .chart { display: flex; align-items: flex-end; gap: 14px; height: 200px; margin: 24px 0 8px; padding-bottom: 8px; border-bottom: 1px solid var(--line); background-image: linear-gradient(var(--line) 1px, transparent 1px); background-size: 100% 50px; }
+  .mo { flex: 1; display: flex; gap: 4px; align-items: flex-end; height: 100%; }
+  .mo span { flex: 1; border-radius: 6px 6px 0 0; transition-property: transform, filter; }
+  .mo:hover span { filter: brightness(1.15); }
+  .labels { display: flex; gap: 14px; font-size: 12px; color: var(--ink-3); } .labels span { flex: 1; text-align: center; }
+  .tiles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-top: 22px; }
+  .tiles > div { background: var(--surface-2); border-radius: var(--r-md); padding: 12px 14px; min-width: 0; }
+  .tiles b { font-size: clamp(.95rem, 1.6vw, 1.1rem); font-weight: 800; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  @media (max-width: 560px) { .tiles { grid-template-columns: minmax(0, 1fr); } .chart { gap: 8px; height: 160px; } .labels { gap: 8px; } }
+</style>

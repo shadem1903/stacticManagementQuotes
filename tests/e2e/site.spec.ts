@@ -55,13 +55,13 @@ test('promociones: sin promociones vigentes muestra estado vacío', async ({ pag
   await expect(page.getByRole('heading', { name: 'No hay promociones vigentes' })).toBeVisible();
 });
 
-test('el ejemplo del inicio cambia entre Cumplido Salud y Cumplido Belleza', async ({ page }) => {
+test('el inicio cambia entre la pantalla de Cumplido Salud y la de Cumplido Belleza', async ({ page }) => {
   await page.goto('/');
-  await expect(page.locator('#demo-salud')).toBeVisible();
-  await page.locator('[data-demo-tab="belleza"]').click();
-  await expect(page.locator('#demo-belleza')).toBeVisible();
-  await expect(page.locator('#demo-salud')).toBeHidden();
-  await expect(page.locator('[data-demo-tab="belleza"]')).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.locator('#ps-salud')).toBeVisible();
+  await page.locator('[data-show="belleza"]').click();
+  await expect(page.locator('#ps-belleza')).toBeVisible();
+  await expect(page.locator('#ps-salud')).toBeHidden();
+  await expect(page.locator('[data-show="belleza"]')).toHaveAttribute('aria-pressed', 'true');
 });
 
 test('tema oscuro se aplica y se recuerda', async ({ page }) => {

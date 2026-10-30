@@ -245,6 +245,25 @@ mark.pending {
 .theme-anim, .theme-anim *, .theme-anim *::before, .theme-anim *::after { transition: background-color var(--dur-3) var(--ease-out), border-color var(--dur-3) var(--ease-out), color var(--dur-3) var(--ease-out) !important; }
 .theme-anim .ico { transition: transform var(--dur-3) var(--ease-spring), opacity var(--dur-2) !important; }
 
+/* Animaciones que dependen del revelado del contenedor (data-reveal + .is-in) */
+@media (prefers-reduced-motion: no-preference) {
+  .js [data-reveal] .grow-y { transform: scaleY(0); transform-origin: bottom; transition: transform 700ms var(--ease-out); transition-delay: calc(200ms + var(--k, 0) * 70ms); }
+  .js [data-reveal].is-in .grow-y { transform: scaleY(1); }
+  .js [data-reveal] .grow-x { transform: scaleX(0); transform-origin: left; transition: transform 900ms var(--ease-out) 150ms; }
+  .js [data-reveal].is-in .grow-x { transform: scaleX(1); }
+  .js [data-reveal] .pop-k { opacity: 0; transform: scale(.6); transition: opacity 300ms var(--ease-out), transform 420ms var(--ease-spring); transition-delay: calc(250ms + var(--k, 0) * 28ms); }
+  .js [data-reveal].is-in .pop-k { opacity: 1; transform: none; }
+}
+
+/* Superficie oscura de marca (hero y llamadas a la acción) */
+.navy { background: #061a36; color: #fff; position: relative; overflow: hidden; }
+.navy-grid { position: absolute; inset: 0; pointer-events: none; background-image: linear-gradient(rgb(255 255 255 / 5%) 1px, transparent 1px), linear-gradient(90deg, rgb(255 255 255 / 5%) 1px, transparent 1px); background-size: 72px 72px; mask-image: radial-gradient(ellipse 80% 70% at 70% 40%, #000, transparent 85%); }
+.btn--light { --btn-bg: #fff; --btn-ink: #073b78; --btn-line: transparent; }
+.btn--light:hover { background: #e6f0ff; box-shadow: 0 10px 24px -12px rgb(0 0 0 / 60%); }
+.btn--outline-light { --btn-bg: transparent; --btn-ink: #fff; --btn-line: rgb(255 255 255 / 32%); }
+.btn--outline-light:hover { background: rgb(255 255 255 / 8%); border-color: #fff; box-shadow: none; }
+.navy :focus-visible { outline-color: #fff; }
+
 @media print { [data-reveal] > * { opacity: 1 !important; transform: none !important; } }
 
 /* ============================================================

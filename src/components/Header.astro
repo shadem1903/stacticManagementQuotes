@@ -4,6 +4,8 @@ import Icon from './Icon.astro';
 import { portalUrl } from '../lib/company';
 import { solutionList } from '../data/solutions';
 
+interface Props { tone?: 'light' | 'dark' }
+const { tone = 'light' } = Astro.props;
 const path = Astro.url.pathname.replace(/\.html$/, '').replace(/\/$/, '') || '/';
 const isActive = (href: string) => (href === '/' ? path === '/' : path === href || path.startsWith(href + '/'));
 const links = [
@@ -13,7 +15,7 @@ const links = [
   { href: '/contacto', label: 'Contacto' },
 ];
 ---
-<header class="site-header" data-header>
+<header class:list={['site-header', { 'site-header--dark': tone === 'dark' }]} data-header>
   <div class="wrap bar">
     <a href="/" class="brand" aria-label="Inicio"><Logo /></a>
 
@@ -97,6 +99,19 @@ const links = [
   .prod-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); margin-right: 4px; transition: transform var(--dur-3) var(--ease-spring); }
   .prod-link:hover .prod-dot { transform: scale(1.4); }
 
+  /* Variante oscura (inicio): continúa el fondo azul del hero */
+  .site-header--dark { background: #061a36; border-bottom-color: rgb(255 255 255 / 8%); }
+  .site-header--dark.is-scrolled { box-shadow: 0 8px 24px -12px rgb(0 0 0 / 60%); }
+  .site-header--dark :global(.logo-text) { color: #fff; }
+  .site-header--dark .nav-link { color: #c9d8ee; }
+  .site-header--dark .nav-link:hover, .site-header--dark .nav-link[aria-current='page'], .site-header--dark .prod-link { color: #fff; }
+  .site-header--dark .icon-btn { background: rgb(255 255 255 / 6%); border-color: rgb(255 255 255 / 16%); color: #e6edf7; }
+  .site-header--dark .icon-btn:hover { border-color: rgb(255 255 255 / 40%); color: #fff; }
+  .site-header--dark :focus-visible { outline-color: #fff; }
+  .site-header--dark .nav-actions :global(.btn:not(.btn--ghost)) { --btn-bg: #fff; --btn-ink: #073b78; }
+  .site-header--dark .nav-actions :global(.btn:not(.btn--ghost)):hover { background: #e6f0ff; }
+  .site-header--dark .prod-dot { filter: brightness(1.4) saturate(1.1); }
+
   .scrim { display: none; }
 
   @media (max-width: 1140px) {
@@ -120,6 +135,8 @@ const links = [
     .nav-actions { flex-direction: column; align-items: stretch; }
     .nav-actions .btn { min-height: 52px; font-size: var(--t-base); }
     .prod-link { gap: 8px; }
+    .site-header--dark .nav { background: #061a36; }
+    .site-header--dark .nav-link { border-bottom-color: rgb(255 255 255 / 10%); }
   }
 </style>
 

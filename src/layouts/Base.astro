@@ -10,8 +10,9 @@ interface Props {
   description: string;
   noindex?: boolean;
   jsonLd?: Record<string, unknown> | Record<string, unknown>[];
+  headerTone?: 'light' | 'dark';
 }
-const { title, description, noindex = false, jsonLd } = Astro.props;
+const { title, description, noindex = false, jsonLd, headerTone = 'light' } = Astro.props;
 const fullTitle = Astro.url.pathname === '/' ? `${company.brandName}: ${title}` : title.startsWith(company.brandName) ? title : `${title} | ${company.brandName}`;
 const canonical = Astro.site ? new URL(Astro.url.pathname.replace(/\.html$/, '').replace(/\/index$/, '/'), Astro.site).href : null;
 const ogImage = Astro.site ? new URL('/og.png', Astro.site).href : null;
@@ -51,7 +52,7 @@ const ogImage = Astro.site ? new URL('/og.png', Astro.site).href : null;
   </head>
   <body>
     <a class="skip-link" href="#contenido">Saltar al contenido</a>
-    <Header />
+    <Header tone={headerTone} />
     <main id="contenido" tabindex="-1">
       <slot />
     </main>
@@ -67,6 +68,23 @@ const ogImage = Astro.site ? new URL('/og.png', Astro.site).href : null;
         groups.forEach((g) => io.observe(g));
       } else {
         groups.forEach((g) => g.classList.add('is-in'));
+      }
+
+      // Cifras que cuentan hacia arriba al entrar en pantalla (data-count="1840000" data-prefix="$ " data-suffix="%")
+      const counters = document.querySelectorAll<HTMLElement>('[data-count]');
+      const fmt = new Intl.NumberFormat('es-CO');
+      const still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const paint = (el: HTMLElement, v: number) => { el.textContent = (el.dataset.prefix ?? '') + fmt.format(Math.round(v)) + (el.dataset.suffix ?? ''); };
+      const run = (el: HTMLElement) => {
+        const target = Number(el.dataset.count);
+        if (still) return paint(el, target);
+        const t0 = performance.now(), dur = Number(el.dataset.dur ?? 1100);
+        const step = (t: number) => { const k = Math.min(1, (t - t0) / dur); paint(el, target * (1 - Math.pow(1 - k, 3))); if (k < 1) requestAnimationFrame(step); };
+        requestAnimationFrame(step);
+      };
+      if ('IntersectionObserver' in window) {
+        const co = new IntersectionObserver((entries) => { for (const e of entries) if (e.isIntersecting) { run(e.target as HTMLElement); co.unobserve(e.target); } }, { threshold: 0.4 });
+        counters.forEach((c) => co.observe(c));
       }
     </script>
   </body>
