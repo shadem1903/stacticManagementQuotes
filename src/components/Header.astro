@@ -53,9 +53,8 @@ const links = [
     position: sticky; top: 0; z-index: 50; height: var(--header-h);
     background: color-mix(in srgb, var(--bg) 86%, transparent);
     backdrop-filter: saturate(1.4) blur(12px); -webkit-backdrop-filter: saturate(1.4) blur(12px);
-    border-bottom: 1px solid transparent; transition: border-color .2s, background-color .2s;
+    border-bottom: 1px solid var(--line); transition: background-color .2s;
   }
-  .site-header.is-scrolled { border-bottom-color: var(--line); }
   .bar { height: 100%; display: flex; align-items: center; gap: var(--s-5); }
   .brand { text-decoration: none; flex: none; }
   .nav { display: flex; align-items: center; gap: var(--s-4); flex: 1; justify-content: space-between; }
