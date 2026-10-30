@@ -23,9 +23,9 @@ const shared = [
   />
   <section class="section">
     <div class="wrap">
-      <div class="sols">
+      <div class="sols" data-reveal>
         {solutionList.map((s) => (
-          <a class="sol" href={`/soluciones/${s.id}`} style={`--accent:${s.accent};--accent-ink:${s.accentInk}`}>
+          <a class="sol lift" href={`/soluciones/${s.id}`} style={`--accent:${s.accent};--accent-ink:${s.accentInk}`}>
             <Logo product={s.id} size={44} />
             <p class="for">{s.pitch}</p>
             <p class="head">{s.headline}</p>
@@ -42,7 +42,7 @@ const shared = [
         <h2 id="base-t">Incluido en los dos</h2>
         <p>La base que todo negocio de atención necesita. <a href="/soluciones/administracion">Ver la administración y contabilidad incluidas</a>.</p>
       </div>
-      <ul class="shared">
+      <ul class="shared" data-reveal>
         {shared.map((x) => <li><Icon name={x.icon} />{x.t}</li>)}
       </ul>
     </div>
@@ -51,8 +51,9 @@ const shared = [
 </Base>
 <style>
   .sols { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-6); }
-  .sol { display: flex; flex-direction: column; gap: var(--s-4); padding: var(--s-10); background: var(--surface); border: 1px solid var(--line); border-top: 5px solid var(--accent); border-radius: var(--r-xl); color: var(--ink); text-decoration: none; transition: box-shadow .2s, transform .2s; }
-  .sol:hover { box-shadow: var(--shadow-2); transform: translateY(-2px); }
+  .sol { display: flex; flex-direction: column; gap: var(--s-4); padding: var(--s-10); background: var(--surface); border: 1px solid var(--line); border-top: 5px solid var(--accent); border-radius: var(--r-xl); color: var(--ink); text-decoration: none; min-width: 0; }
+  .sol:hover { border-color: var(--accent); }
+  .sol:hover .more { text-decoration-thickness: 2px; }
   .sol :global(.logo-text) { font-size: 1.75rem; }
   .for { margin: 0; font-weight: 600; font-size: var(--t-sm); color: var(--accent-ink); }
   .head { margin: 0; font-size: var(--t-lg); font-weight: 650; letter-spacing: -0.015em; line-height: 1.3; }
@@ -63,6 +64,7 @@ const shared = [
   .shared { list-style: none; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--s-3); }
   .shared li { display: flex; gap: var(--s-3); align-items: center; padding: var(--s-4) var(--s-5); border: 1px solid var(--line); border-radius: var(--r-md); background: var(--bg); font-weight: 600; }
   .shared :global(.ico) { color: var(--c-brand); }
-  @media (max-width: 900px) { .sols { grid-template-columns: 1fr; } .sol { padding: var(--s-6); } .shared { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 900px) { .sols { grid-template-columns: minmax(0, 1fr); } .sol { padding: var(--s-6); }
+  @media (max-width: 420px) { .sol { padding: var(--s-5); } .sol :global(.logo-text) { font-size: 1.4rem; } } .shared { grid-template-columns: 1fr 1fr; } }
   @media (max-width: 520px) { .shared { grid-template-columns: 1fr; } }
 </style>

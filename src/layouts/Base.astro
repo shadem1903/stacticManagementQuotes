@@ -40,6 +40,7 @@ const ogImage = Astro.site ? new URL('/og.png', Astro.site).href : null;
       // Aplica el tema antes de pintar para evitar parpadeo. Preferencia local, sin cookies.
       (function () {
         var r = document.documentElement, t = null;
+        r.classList.add('js');
         try { t = localStorage.getItem('theme'); } catch (e) {}
         if (t === 'light' || t === 'dark') r.dataset.theme = t;
         var dark = t ? t === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -55,5 +56,18 @@ const ogImage = Astro.site ? new URL('/og.png', Astro.site).href : null;
       <slot />
     </main>
     <Footer />
+    <script>
+      // Revelado progresivo: cada bloque con data-reveal anima a sus hijos en cascada al entrar en pantalla.
+      const groups = document.querySelectorAll<HTMLElement>('[data-reveal]');
+      groups.forEach((g) => Array.from(g.children).forEach((c, i) => (c as HTMLElement).style.setProperty('--i', String(Math.min(i, 8)))));
+      if ('IntersectionObserver' in window) {
+        const io = new IntersectionObserver((entries) => {
+          for (const e of entries) if (e.isIntersecting) { e.target.classList.add('is-in'); io.unobserve(e.target); }
+        }, { rootMargin: '0px 0px -10% 0px', threshold: 0 });
+        groups.forEach((g) => io.observe(g));
+      } else {
+        groups.forEach((g) => g.classList.add('is-in'));
+      }
+    </script>
   </body>
 </html>

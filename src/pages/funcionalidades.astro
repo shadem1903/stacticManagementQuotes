@@ -65,8 +65,9 @@ const areaLabel: Record<string, string> = { salud: 'Cumplido Salud', belleza: 'C
   .filter-bar { position: sticky; top: var(--header-h); z-index: 10; background: color-mix(in srgb, var(--bg) 92%, transparent); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
   .filters { border: 0; margin: 0; padding: var(--s-3) 0; display: flex; gap: var(--s-2); overflow-x: auto; }
   .filters label { position: relative; flex: none; }
-  .filters input { position: absolute; opacity: 0; inset: 0; cursor: pointer; }
-  .filters span { display: inline-block; padding: 7px 14px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); font-size: var(--t-sm); font-weight: 600; color: var(--ink-2); }
+  .filters input { position: absolute; z-index: 1; opacity: 0; inset: 0; cursor: pointer; margin: 0; }
+  .filters span { display: inline-flex; align-items: center; min-height: 44px; padding: 0 16px; transition: background-color var(--dur-2), color var(--dur-2), border-color var(--dur-2), transform var(--dur-1); border-radius: 999px; border: 1px solid var(--line); background: var(--surface); font-size: var(--t-sm); font-weight: 600; color: var(--ink-2); }
+  .filters input:active + span { transform: scale(.96); }
   .filters input:checked + span { background: var(--c-brand); border-color: var(--c-brand); color: var(--on-brand); }
   .filters input:focus-visible + span { outline: 3px solid var(--focus); outline-offset: 2px; }
   .group + .group { margin-top: var(--s-16); }
@@ -74,12 +75,14 @@ const areaLabel: Record<string, string> = { salud: 'Cumplido Salud', belleza: 'C
   .items { list-style: none; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 var(--s-10); }
   .items li { display: flex; gap: var(--s-4); padding: var(--s-5) 0; border-bottom: 1px solid var(--line); }
   .items li[hidden] { display: none; }
-  .fi { width: 40px; height: 40px; flex: none; border-radius: 10px; display: grid; place-items: center; color: var(--c-brand); background: var(--c-brand-soft); }
+  .items li.pop { animation: pop var(--dur-3) var(--ease-out) both; animation-delay: calc(var(--k, 0) * 25ms); }
+  @keyframes pop { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+  .fi { width: 40px; height: 40px; flex: none; border-radius: var(--r-md); display: grid; place-items: center; color: var(--c-brand); background: var(--c-brand-soft); }
   .ft { display: flex; flex-wrap: wrap; gap: var(--s-2) var(--s-3); align-items: center; margin-bottom: 4px; }
   .ft h3 { margin: 0; font-size: var(--t-base); }
   .items p { margin: 0; color: var(--ink-2); font-size: var(--t-sm); }
   .items .areas { color: var(--ink-3); font-size: var(--t-xs); margin-top: 6px; }
-  @media (max-width: 800px) { .items { grid-template-columns: 1fr; } }
+  @media (max-width: 800px) { .items { grid-template-columns: minmax(0, 1fr); } }
 </style>
 <script>
   const filters = document.querySelector('[data-filters]');
@@ -90,7 +93,8 @@ const areaLabel: Record<string, string> = { salud: 'Cumplido Salud', belleza: 'C
       let any = false;
       g.querySelectorAll<HTMLElement>('li[data-areas]').forEach((li) => {
         const ok = v === 'todas' || li.dataset.areas!.split(' ').includes(v);
-        li.hidden = !ok; if (ok) { any = true; shown++; }
+        li.hidden = !ok; li.classList.remove('pop');
+        if (ok) { any = true; shown++; void li.offsetWidth; li.style.setProperty('--k', String(Math.min(shown, 12))); li.classList.add('pop'); }
       });
       g.hidden = !any;
     });

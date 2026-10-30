@@ -173,6 +173,7 @@ const channels = [
   .row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s-5); }
   .field { display: grid; gap: 6px; min-width: 0; border: 0; padding: 0; margin: 0; }
   .field[hidden] { display: none; }
+  [data-phone]:not([hidden]) { animation: errIn var(--dur-3) var(--ease-out); }
   label, legend { font-weight: 600; font-size: var(--t-sm); color: var(--ink); }
   legend { margin-bottom: 6px; padding: 0; }
   input[type='text'], input[type='email'], input[type='tel'], select, textarea {
@@ -183,20 +184,23 @@ const channels = [
   textarea { resize: vertical; min-height: 130px; }
   input:focus, select:focus, textarea:focus { outline: none; border-color: var(--c-brand); box-shadow: 0 0 0 3px color-mix(in srgb, var(--c-brand) 25%, transparent); }
   [aria-invalid='true'] { border-color: var(--err) !important; }
-  .err { color: var(--err); font-size: var(--t-sm); margin: 0; min-height: 0; }
+  .err { color: var(--err); font-size: var(--t-sm); margin: 0; min-height: 0; animation: errIn var(--dur-2) var(--ease-out); }
+  @keyframes errIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
   .err:empty { display: none; }
   .help { display: flex; justify-content: space-between; gap: var(--s-4); color: var(--ink-3); margin: 0; }
   .radios { display: flex; flex-wrap: wrap; gap: var(--s-2); }
   .radio { position: relative; }
-  .radio input { position: absolute; opacity: 0; inset: 0; cursor: pointer; margin: 0; }
-  .radio span { display: inline-block; padding: 9px 14px; border-radius: var(--r-md); border: 1px solid var(--line-strong); font-weight: 500; background: var(--bg); }
+  .radio input { position: absolute; z-index: 1; opacity: 0; inset: 0; cursor: pointer; margin: 0; }
+  .radio span { display: inline-flex; align-items: center; min-height: 44px; padding: 0 16px; transition: border-color var(--dur-2), background-color var(--dur-2), color var(--dur-2), transform var(--dur-1); border-radius: var(--r-md); border: 1px solid var(--line-strong); font-weight: 500; background: var(--bg); }
+  .radio input:active + span { transform: scale(.97); }
   .radio input:checked + span { border-color: var(--c-brand); background: var(--c-brand-soft); color: var(--c-brand); font-weight: 600; }
   .radio input:focus-visible + span { outline: 3px solid var(--focus); outline-offset: 2px; }
   .privacy { background: var(--surface-2); border: 1px solid var(--line); border-radius: var(--r-md); padding: var(--s-4); color: var(--ink-2); }
   .privacy p { margin: 0; }
   .checks { display: grid; gap: var(--s-3); }
   .check { display: flex; gap: var(--s-3); align-items: flex-start; font-weight: 400; color: var(--ink-2); cursor: pointer; }
-  .check input { width: 20px; height: 20px; margin: 2px 0 0; flex: none; accent-color: var(--c-brand); }
+  .check { min-height: 44px; align-items: center; }
+  .check input { width: 22px; height: 22px; margin: 2px 0 0; flex: none; accent-color: var(--c-brand); }
   .hp { position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
   .submit { justify-self: start; min-width: 200px; }
   .spinner { display: none; width: 16px; height: 16px; border-radius: 50%; border: 2px solid currentColor; border-right-color: transparent; animation: spin .7s linear infinite; }
@@ -207,7 +211,7 @@ const channels = [
   .ok-ico :global(.ico) { width: 30px; height: 30px; }
   .rid { font-size: var(--t-md); }
   @keyframes pop { from { opacity: 0; transform: scale(.96); } to { opacity: 1; transform: none; } }
-  @media (max-width: 900px) { .contact { grid-template-columns: 1fr; } .side { order: 2; } }
+  @media (max-width: 900px) { .contact { grid-template-columns: minmax(0, 1fr); } .side { order: 2; } }
   @media (max-width: 600px) { .row { grid-template-columns: 1fr; } .form-card { padding: var(--s-5); } .submit { justify-self: stretch; } }
 </style>
 

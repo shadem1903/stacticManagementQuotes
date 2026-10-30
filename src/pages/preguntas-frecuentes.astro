@@ -29,9 +29,10 @@ const ld = {
 </Base>
 <style>
   .cats { display: flex; flex-wrap: wrap; gap: var(--s-2); margin-top: var(--s-4); }
-  .cats a { padding: 6px 14px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); font-size: var(--t-sm); font-weight: 600; text-decoration: none; }
+  .cats a { display: inline-flex; align-items: center; min-height: 44px; padding: 0 16px; transition: border-color var(--dur-2), background-color var(--dur-2); border: 1px solid var(--line); border-radius: 999px; background: var(--surface); font-size: var(--t-sm); font-weight: 600; text-decoration: none; }
+  .cats a:hover { border-color: var(--c-brand); background: var(--c-brand-soft); }
   .cat { display: grid; grid-template-columns: minmax(0, .7fr) minmax(0, 1.6fr); gap: var(--s-10); }
   .cat + .cat { margin-top: var(--s-16); }
   .cat h2 { font-size: var(--t-xl); }
-  @media (max-width: 900px) { .cat { grid-template-columns: 1fr; gap: var(--s-2); } }
+  @media (max-width: 900px) { .cat { grid-template-columns: minmax(0, 1fr); gap: var(--s-2); } }
 </style>

@@ -13,6 +13,7 @@ for (const path of PAGES) {
     const errors: string[] = [];
     page.on('pageerror', (e) => errors.push(e.message));
     page.on('console', (m) => m.type() === 'error' && errors.push(m.text()));
+    await page.emulateMedia({ reducedMotion: 'reduce' });
     const res = await page.goto(path);
     expect(res?.status()).toBe(200);
     await expect(page.locator('h1')).toHaveCount(1);
@@ -34,6 +35,16 @@ test('los documentos legales en borrador no se indexan y muestran aviso', async 
   await expect(page.locator('mark.pending').first()).toBeVisible();
 });
 
+test('el acordeón de preguntas abre y cierra', async ({ page }) => {
+  await page.goto('/preguntas-frecuentes');
+  const d = page.locator('details').first();
+  await d.locator('summary').click();
+  await expect(d).toHaveAttribute('open', '');
+  await expect(d.locator('.ans')).toBeVisible();
+  await d.locator('summary').click();
+  await expect(d).not.toHaveAttribute('open', '');
+});
+
 test('página 404 personalizada', async ({ page }) => {
   await page.goto('/no-existe');
   await expect(page.getByRole('heading', { name: 'Esta página no existe' })).toBeVisible();
@@ -47,10 +58,10 @@ test('promociones: sin promociones vigentes muestra estado vacío', async ({ pag
 test('el ejemplo del inicio cambia entre Cumplido Salud y Cumplido Belleza', async ({ page }) => {
   await page.goto('/');
   await expect(page.locator('#demo-salud')).toBeVisible();
-  await page.getByRole('button', { name: 'Cumplido Belleza' }).click();
+  await page.locator('[data-demo-tab="belleza"]').click();
   await expect(page.locator('#demo-belleza')).toBeVisible();
   await expect(page.locator('#demo-salud')).toBeHidden();
-  await expect(page.getByRole('button', { name: 'Cumplido Belleza' })).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.locator('[data-demo-tab="belleza"]')).toHaveAttribute('aria-pressed', 'true');
 });
 
 test('tema oscuro se aplica y se recuerda', async ({ page }) => {
@@ -80,6 +91,15 @@ test.describe('navegación', () => {
     await btn.click();
     await expect(btn).toHaveAttribute('aria-expanded', 'true');
     await expect(page.getByRole('navigation', { name: 'Principal' }).getByRole('link', { name: 'Planes' })).toBeVisible();
+    // El panel debe cubrir la pantalla (antes quedaba de 65 px por el backdrop-filter del encabezado)
+    await page.waitForTimeout(400);
+    const box = await page.locator('[data-nav]').boundingBox();
+    const vh = page.viewportSize()!.height;
+    expect(box!.height).toBeGreaterThan(vh - 100);
+    await expect(page.locator('main')).toHaveJSProperty('inert', true);
+    // El foco no sale del menú
+    for (let i = 0; i < 12; i++) await page.keyboard.press('Tab');
+    expect(await page.evaluate(() => !!document.activeElement?.closest('[data-header]'))).toBe(true);
     await page.keyboard.press('Escape');
     await expect(btn).toHaveAttribute('aria-expanded', 'false');
     await expect(btn).toBeFocused();

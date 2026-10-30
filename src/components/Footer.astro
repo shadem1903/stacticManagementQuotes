@@ -81,10 +81,11 @@ const contacts = [
   .contacts { list-style: none; margin-top: var(--s-3); }
   .cols { display: grid; grid-template-columns: 1fr 1fr 1.4fr; gap: var(--s-8); }
   .cols h2 { font-size: var(--t-sm); font-weight: 650; color: var(--ink); margin-bottom: var(--s-3); letter-spacing: 0; }
-  .cols ul { list-style: none; display: grid; gap: 6px; }
+  .cols ul { list-style: none; display: grid; gap: 0; }
   .legal-col ul { grid-template-columns: 1fr; }
-  .cols a { color: var(--ink-2); text-decoration: none; font-size: var(--t-sm); }
-  .cols a:hover { color: var(--c-brand); text-decoration: underline; }
+  .cols a { display: inline-flex; align-items: center; min-height: 40px; color: var(--ink-2); font-size: var(--t-sm); text-decoration: none; background: linear-gradient(currentColor, currentColor) 0 calc(100% - 8px) / 0 1px no-repeat; transition: color var(--dur-2), background-size var(--dur-3) var(--ease-out); }
+  .cols a:hover, .cols a:focus-visible { color: var(--c-brand); background-size: 100% 1px; }
+  @media (pointer: coarse) { .cols a { min-height: 44px; } }
   .bottom { display: flex; flex-wrap: wrap; gap: var(--s-2) var(--s-6); align-items: center; border-top: 1px solid var(--line); margin-top: var(--s-12); padding-top: var(--s-6); color: var(--ink-2); }
   .bottom p { margin: 0; }
   .social { list-style: none; display: flex; gap: var(--s-4); margin-left: auto; text-transform: capitalize; }

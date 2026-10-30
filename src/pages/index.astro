@@ -76,7 +76,8 @@ const jsonLd = [
         </div>
       </div>
       <div class="hero-visual">
-        <div class="seg" role="group" aria-label="Ver ejemplo de">
+        <div class="seg" role="group" aria-label="Ver ejemplo de" data-seg>
+          <span class="seg-ind" aria-hidden="true"></span>
           {solutionList.map((s, i) => (
             <button type="button" aria-pressed={i === 0 ? 'true' : 'false'} aria-controls={`demo-${s.id}`} data-demo-tab={s.id} style={`--accent:${s.accent}`}>{s.name}</button>
           ))}
@@ -94,7 +95,7 @@ const jsonLd = [
         <h2 id="prod-t">Dos software, cada uno hecho para su negocio</h2>
         <p>Un consultorio no trabaja como un salón. Por eso Cumplido no es un sistema genérico: cada software habla el idioma de tu negocio y trae lo que necesitas desde el primer día.</p>
       </div>
-      <div class="products">
+      <div class="products" data-reveal>
         {solutionList.map((s) => (
           <article class="product" style={`--accent:${s.accent};--accent-ink:${s.accentInk}`} aria-labelledby={`p-${s.id}`}>
             <header>
@@ -108,7 +109,7 @@ const jsonLd = [
             </ul>
             <div class="p-actions">
               <a class="btn" href={`/contacto?motivo=demo&producto=${s.id}`}>Pedir demo de {s.name}</a>
-              <a class="p-link" href={`/soluciones/${s.id}`}>Conocer {s.name}</a>
+              <a class="p-link link-touch" href={`/soluciones/${s.id}`}>Conocer {s.name}</a>
             </div>
           </article>
         ))}
@@ -123,7 +124,7 @@ const jsonLd = [
         <h2 id="problemas-t">Lo que cambia cuando trabajas con Cumplido</h2>
         <p>Cuando la agenda, los pagos y las cuentas viven en lugares distintos, el equipo pierde tiempo y el dueño decide sin números.</p>
       </div>
-      <div class="pairs" role="table" aria-label="Antes y con Cumplido">
+      <div class="pairs" role="table" aria-label="Antes y con Cumplido" data-reveal>
         <div class="pairs-head" role="row">
           <span role="columnheader">Antes</span>
           <span role="columnheader">Con Cumplido</span>
@@ -148,7 +149,7 @@ const jsonLd = [
         </div>
         <a class="btn btn--ghost" href="/soluciones/administracion">Ver qué incluye</a>
       </div>
-      <ul class="feat-grid">
+      <ul class="feat-grid" data-reveal>
         {adminGroup.items.slice(0, 9).map((f) => (
           <li class="feat">
             <span class="feat-ico"><Icon name={f.icon} /></span>
@@ -169,7 +170,7 @@ const jsonLd = [
         <h2 id="como-t">Cómo empiezas</h2>
         <p>De la primera conversación al uso diario, en cinco pasos.</p>
       </div>
-      <ol class="steps">
+      <ol class="steps" data-reveal>
         {steps.map((s, i) => (
           <li>
             <span class="step-n" aria-hidden="true">{i + 1}</span>
@@ -207,7 +208,7 @@ const jsonLd = [
         <h2 id="seg-t">Cómo cuidamos tu información</h2>
         <p>Separamos lo que ya aplicamos en este sitio de lo que estamos construyendo en el software. No declaramos certificaciones que no tenemos.</p>
       </div>
-      <div class="trust">
+      <div class="trust" data-reveal>
         <div class="trust-col">
           <h3><Icon name="Monitor" />En este sitio</h3>
           <ul class="checks">
@@ -228,9 +229,9 @@ const jsonLd = [
         </div>
       </div>
       <p class="trust-links small">
-        <a href="/legal/seguridad">Seguridad y reporte de incidentes</a>
-        <a href="/legal/tratamiento-de-datos">Tratamiento de datos personales</a>
-        <a href="/legal/tratamiento-por-encargo">Datos de tus pacientes y clientes</a>
+        <a class="link-touch" href="/legal/seguridad">Seguridad y reporte de incidentes</a>
+        <a class="link-touch" href="/legal/tratamiento-de-datos">Tratamiento de datos personales</a>
+        <a class="link-touch" href="/legal/tratamiento-por-encargo">Datos de tus pacientes y clientes</a>
       </p>
     </div>
   </section>
@@ -278,12 +279,15 @@ const jsonLd = [
   .pick-go { font-size: var(--t-sm); font-weight: 600; color: var(--c-brand); text-decoration: underline; text-underline-offset: 3px; }
   .hero-actions { display: flex; gap: var(--s-3); flex-wrap: wrap; }
   .hero-visual { animation: rise .8s cubic-bezier(.2, .8, .2, 1) .15s both; }
-  .seg { display: inline-flex; gap: 4px; padding: 4px; border-radius: 999px; background: var(--surface); border: 1px solid var(--line); margin-bottom: var(--s-5); }
-  .seg button { font: 600 var(--t-sm)/1 var(--font); border: 0; background: transparent; color: var(--ink-2); padding: 9px 14px; border-radius: 999px; cursor: pointer; }
-  .seg button[aria-pressed='true'] { background: color-mix(in srgb, var(--accent) 15%, var(--surface)); color: var(--ink); box-shadow: inset 0 0 0 1px var(--accent); }
+  .seg { position: relative; display: inline-flex; gap: 4px; padding: 4px; border-radius: var(--r-full); background: var(--surface); border: 1px solid var(--line); margin-bottom: var(--s-6); max-width: 100%; }
+  .seg button { position: relative; z-index: 1; min-height: 44px; font: 600 var(--t-sm)/1 var(--font); border: 0; background: transparent; color: var(--ink-2); padding: 0 16px; border-radius: var(--r-full); cursor: pointer; transition: color var(--dur-2); white-space: nowrap; }
+  .seg button[aria-pressed='true'] { color: var(--ink); }
+  .seg-ind { position: absolute; z-index: 0; top: 4px; bottom: 4px; left: 0; width: 0; border-radius: var(--r-full);
+    background: color-mix(in srgb, var(--ind, var(--c-health)) 15%, var(--surface)); box-shadow: inset 0 0 0 1px var(--ind, var(--c-health));
+    transition: transform var(--dur-3) var(--ease-out), width var(--dur-3) var(--ease-out), background-color var(--dur-3), box-shadow var(--dur-3); }
   @keyframes rise { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
-  @media (max-width: 1000px) { .hero-in { grid-template-columns: 1fr; gap: var(--s-12); } .hero { padding-bottom: var(--s-20); } }
-  @media (max-width: 520px) { .pick { grid-template-columns: 1fr; } }
+  @media (max-width: 1100px) { .hero-in { grid-template-columns: minmax(0, 1fr); gap: var(--s-12); } .hero { padding: var(--s-12) 0 var(--s-20); } .hero-copy, .hero-visual { max-width: 680px; } }
+  @media (max-width: 520px) { .pick { grid-template-columns: 1fr; } .hero-actions .btn { flex: 1 1 100%; } }
 
   /* Productos */
   .products { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s-6); }
@@ -296,7 +300,8 @@ const jsonLd = [
   .product .checks :global(.ico) { color: var(--accent-ink); }
   .p-actions { display: flex; flex-wrap: wrap; gap: var(--s-4); align-items: center; }
   .p-link { font-weight: 600; }
-  @media (max-width: 900px) { .products { grid-template-columns: 1fr; } .product { padding: var(--s-6); } }
+  @media (max-width: 900px) { .products { grid-template-columns: minmax(0, 1fr); } .product { padding: var(--s-6); } }
+  @media (max-width: 420px) { .product { padding: var(--s-5); } .product :global(.logo-text) { font-size: 1.4rem; } .p-actions .btn { width: 100%; } }
 
   .checks { list-style: none; display: grid; gap: var(--s-3); }
   .checks li { display: flex; gap: var(--s-3); align-items: flex-start; color: var(--ink-2); }
@@ -323,7 +328,7 @@ const jsonLd = [
   .row-head p { margin-bottom: 0; }
   .feat-grid { list-style: none; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-top: 1px solid var(--line); border-left: 1px solid var(--line); }
   .feat { display: flex; gap: var(--s-4); padding: var(--s-6); border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); background: var(--surface); }
-  .feat-ico { width: 40px; height: 40px; border-radius: 10px; display: grid; place-items: center; flex: none; background: color-mix(in srgb, var(--c-admin) 12%, transparent); color: var(--c-admin-ink); }
+  .feat-ico { width: 40px; height: 40px; border-radius: var(--r-md); display: grid; place-items: center; flex: none; background: color-mix(in srgb, var(--c-admin) 12%, transparent); color: var(--c-admin-ink); }
   .feat-top { display: flex; flex-wrap: wrap; gap: var(--s-2) var(--s-3); align-items: center; margin-bottom: var(--s-2); }
   .feat h3 { margin: 0; font-size: var(--t-base); }
   .feat p { margin: 0; color: var(--ink-2); font-size: var(--t-sm); }
@@ -334,7 +339,7 @@ const jsonLd = [
   .steps { list-style: none; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: var(--s-6); position: relative; }
   .steps::before { content: ''; position: absolute; top: 20px; left: 20px; right: 10%; height: 2px; background: linear-gradient(90deg, var(--c-health), var(--c-brand), var(--c-beauty)); opacity: .5; }
   .steps li { position: relative; }
-  .step-n { position: relative; display: grid; place-items: center; width: 42px; height: 42px; border-radius: 50%; background: var(--surface); border: 2px solid var(--c-brand); color: var(--c-brand); font-weight: 750; margin-bottom: var(--s-5); }
+  .step-n { position: relative; z-index: 1; display: grid; place-items: center; width: 42px; height: 42px; border-radius: 50%; background: var(--surface); border: 2px solid var(--c-brand); color: var(--c-brand); font-weight: 750; margin-bottom: var(--s-5); }
   .steps h3 { font-size: var(--t-base); margin-bottom: var(--s-2); }
   .steps p { color: var(--ink-2); font-size: var(--t-sm); margin: 0; }
   @media (max-width: 900px) {
@@ -361,7 +366,15 @@ const jsonLd = [
 <script>
   // Cambia el ejemplo del hero entre Cumplido Salud y Cumplido Belleza.
   const tabs = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-demo-tab]'));
+  const seg = document.querySelector<HTMLElement>('[data-seg]')!;
+  const ind = seg.querySelector<HTMLElement>('.seg-ind')!;
+  const moveInd = (t: HTMLButtonElement) => {
+    ind.style.width = `${t.offsetWidth}px`;
+    ind.style.transform = `translateX(${t.offsetLeft}px)`;
+    ind.style.setProperty('--ind', t.style.getPropertyValue('--accent'));
+  };
   const select = (t: HTMLButtonElement) => {
+    moveInd(t);
     tabs.forEach((b) => {
       const on = b === t;
       b.setAttribute('aria-pressed', String(on));
@@ -369,6 +382,8 @@ const jsonLd = [
     });
   };
   tabs.forEach((t) => t.addEventListener('click', () => select(t)));
+  moveInd(tabs[0]);
+  new ResizeObserver(() => moveInd(tabs.find((b) => b.getAttribute('aria-pressed') === 'true')!)).observe(seg);
   // Al pasar el cursor por una tarjeta de producto, el ejemplo muestra ese software.
   document.querySelectorAll<HTMLElement>('[data-pick]').forEach((c) => {
     c.addEventListener('mouseenter', () => {

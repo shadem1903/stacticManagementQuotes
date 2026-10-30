@@ -49,57 +49,77 @@ const links = [
 </header>
 
 <style>
+  /* Sin backdrop-filter: además de estar en la lista de prohibidos, convertía al encabezado
+     en contenedor de los elementos fijos y dejaba el menú móvil con 65 px de alto. */
   .site-header {
     position: sticky; top: 0; z-index: 50; height: var(--header-h);
-    background: color-mix(in srgb, var(--bg) 86%, transparent);
-    backdrop-filter: saturate(1.4) blur(12px); -webkit-backdrop-filter: saturate(1.4) blur(12px);
-    border-bottom: 1px solid var(--line); transition: background-color .2s;
+    background: var(--bg); border-bottom: 1px solid var(--line);
+    transition: box-shadow var(--dur-3) var(--ease-out);
   }
+  .site-header.is-scrolled { box-shadow: 0 6px 20px -14px rgb(7 59 120 / 35%); }
   .bar { height: 100%; display: flex; align-items: center; gap: var(--s-5); }
-  .brand { text-decoration: none; flex: none; }
+  .brand { text-decoration: none; flex: none; border-radius: var(--r-md); }
+  .brand :global(.logo-mark) { transition: transform var(--dur-3) var(--ease-spring); }
+  .brand:hover :global(.logo-mark) { transform: rotate(-8deg) scale(1.05); }
   .nav { display: flex; align-items: center; gap: var(--s-4); flex: 1; justify-content: space-between; }
-  .nav-list { list-style: none; display: flex; gap: var(--s-1); align-items: center; }
+  .nav-list { list-style: none; display: flex; gap: 2px; align-items: center; }
   .nav-link {
-    display: inline-flex; align-items: center; gap: 4px; padding: 8px 10px; border-radius: var(--r-sm); white-space: nowrap;
+    position: relative; display: inline-flex; align-items: center; gap: 4px; min-height: 44px; padding: 0 10px; border-radius: var(--r-sm); white-space: nowrap;
     color: var(--ink-2); font: 500 var(--t-sm)/1.2 var(--font); text-decoration: none; background: none; border: 0; cursor: pointer;
+    transition: color var(--dur-2) var(--ease-out), background-color var(--dur-2) var(--ease-out);
   }
-  .nav-link:hover { color: var(--ink); background: var(--c-brand-soft); }
-  .nav-link[aria-current='page'] { color: var(--c-brand); font-weight: 600; }
+  .nav-link::after {
+    content: ''; position: absolute; left: 10px; right: 10px; bottom: 6px; height: 2px; border-radius: 2px;
+    background: var(--accent, var(--c-brand)); transform: scaleX(0); transform-origin: left; transition: transform var(--dur-3) var(--ease-out);
+  }
+  .nav-link:hover { color: var(--ink); }
+  .nav-link:hover::after, .nav-link[aria-current='page']::after { transform: scaleX(1); }
+  .nav-link[aria-current='page'] { color: var(--ink); font-weight: 600; }
   .nav-actions { display: flex; gap: var(--s-2); align-items: center; white-space: nowrap; }
-  .bar-end { display: flex; gap: var(--s-1); align-items: center; }
+  .bar-end { display: flex; gap: var(--s-2); align-items: center; }
   .icon-btn {
-    width: 40px; height: 40px; display: grid; place-items: center; border-radius: var(--r-md);
+    position: relative; width: 44px; height: 44px; display: grid; place-items: center; border-radius: var(--r-md);
     border: 1px solid var(--line); background: var(--surface); color: var(--ink-2); cursor: pointer;
+    transition: color var(--dur-2), border-color var(--dur-2), transform var(--dur-1) var(--ease-out);
   }
   .icon-btn:hover { color: var(--ink); border-color: var(--line-strong); }
-  .icon-btn :global(.ico) { width: 20px; height: 20px; }
-  :global(.i-sun), :global(.i-close) { display: none !important; }
-  :global(:root[data-theme-resolved='dark']) :global(.i-sun) { display: block !important; }
-  :global(:root[data-theme-resolved='dark']) :global(.i-moon) { display: none !important; }
-  .menu-btn[aria-expanded='true'] :global(.i-close) { display: block !important; }
-  .menu-btn[aria-expanded='true'] :global(.i-open) { display: none !important; }
+  .icon-btn:active { transform: scale(.94); }
+  .icon-btn :global(.ico) { position: absolute; width: 20px; height: 20px; transition: transform var(--dur-3) var(--ease-spring), opacity var(--dur-2); }
+  /* Iconos que giran al cambiar de estado */
+  :global(.i-sun), :global(.i-close) { opacity: 0; transform: rotate(-90deg) scale(.6); }
+  :global(:root[data-theme-resolved='dark']) :global(.i-sun) { opacity: 1; transform: none; }
+  :global(:root[data-theme-resolved='dark']) :global(.i-moon) { opacity: 0; transform: rotate(90deg) scale(.6); }
+  .menu-btn[aria-expanded='true'] :global(.i-close) { opacity: 1; transform: none; }
+  .menu-btn[aria-expanded='true'] :global(.i-open) { opacity: 0; transform: rotate(90deg) scale(.6); }
   .menu-btn { display: none; }
 
   .prod-link { font-weight: 600; color: var(--ink); }
-  .prod-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); margin-right: 4px; }
-  .prod-link[aria-current='page'] { color: var(--ink); box-shadow: inset 0 -2px 0 var(--accent); border-radius: 0; }
+  .prod-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); margin-right: 4px; transition: transform var(--dur-3) var(--ease-spring); }
+  .prod-link:hover .prod-dot { transform: scale(1.4); }
+
+  .scrim { display: none; }
 
   @media (max-width: 1140px) {
     .menu-btn { display: grid; }
     .bar { justify-content: space-between; }
     .nav {
-      position: fixed; inset: var(--header-h) 0 0 0; z-index: 49; flex-direction: column; align-items: stretch; justify-content: flex-start;
-      gap: var(--s-6); padding: var(--s-6) var(--s-4) var(--s-10); overflow-y: auto;
-      background: var(--bg); border-top: 1px solid var(--line);
-      opacity: 0; visibility: hidden; transform: translateY(-8px); transition: opacity .2s, transform .2s, visibility .2s;
+      position: fixed; top: var(--header-h); left: 0; right: 0; bottom: 0; z-index: 49;
+      flex-direction: column; align-items: stretch; justify-content: flex-start;
+      gap: var(--s-6); padding: var(--s-4) var(--s-4) calc(var(--s-10) + env(safe-area-inset-bottom)); overflow-y: auto; overscroll-behavior: contain;
+      background: var(--bg);
+      visibility: hidden; clip-path: inset(0 0 100% 0);
+      transition: clip-path var(--dur-3) var(--ease-in-out), visibility 0s linear var(--dur-3);
     }
-    .nav.is-open { opacity: 1; visibility: visible; transform: none; }
+    .nav.is-open { visibility: visible; clip-path: inset(0 0 0 0); transition: clip-path var(--dur-3) var(--ease-out), visibility 0s; }
     .nav-list { flex-direction: column; align-items: stretch; gap: 0; }
-    .nav-link { width: 100%; justify-content: space-between; padding: 14px 8px; font-size: var(--t-md); border-bottom: 1px solid var(--line); border-radius: 0; }
+    .nav-list li, .nav-actions { opacity: 0; transform: translateY(-8px); transition: opacity var(--dur-2), transform var(--dur-3) var(--ease-out); }
+    .nav.is-open .nav-list li, .nav.is-open .nav-actions { opacity: 1; transform: none; transition-delay: calc(60ms + var(--i, 0) * 35ms); }
+    .nav-link { width: 100%; justify-content: flex-start; min-height: 56px; padding: 0 8px; font-size: var(--t-md); border-bottom: 1px solid var(--line); border-radius: 0; }
+    .nav-link::after { display: none; }
+    .nav-link[aria-current='page'] { color: var(--c-brand); }
     .nav-actions { flex-direction: column; align-items: stretch; }
-    .nav-actions .btn { min-height: 48px; }
-    .prod-link { justify-content: flex-start; gap: 8px; }
-    .prod-link[aria-current="page"] { box-shadow: none; }
+    .nav-actions .btn { min-height: 52px; font-size: var(--t-base); }
+    .prod-link { gap: 8px; }
   }
 </style>
 
@@ -112,17 +132,31 @@ const links = [
   onScroll();
   window.addEventListener('scroll', onScroll, { passive: true });
 
+  // Escalonado de los elementos del menú móvil
+  nav.querySelectorAll<HTMLElement>('.nav-list li, .nav-actions').forEach((el, i) => el.style.setProperty('--i', String(i)));
+
+  const outside = () => [document.querySelector('main'), document.querySelector('footer'), document.querySelector('.skip-link')] as (HTMLElement | null)[];
+  const focusables = () => [menuBtn, ...nav.querySelectorAll<HTMLElement>('a[href], button:not([disabled])')];
   const setMenu = (open: boolean) => {
     menuBtn.setAttribute('aria-expanded', String(open));
     menuLabel.textContent = open ? 'Cerrar menú' : 'Abrir menú';
     nav.classList.toggle('is-open', open);
     document.body.style.overflow = open ? 'hidden' : '';
-    if (open) nav.querySelector<HTMLElement>('a, button')?.focus();
+    outside().forEach((el) => el && (el.inert = open));
+    if (open) setTimeout(() => nav.querySelector<HTMLElement>('a, button')?.focus(), 60);
   };
   menuBtn.addEventListener('click', () => setMenu(menuBtn.getAttribute('aria-expanded') !== 'true'));
+  nav.addEventListener('click', (e) => { if ((e.target as HTMLElement).closest('a')) setMenu(false); });
   document.addEventListener('keydown', (e) => {
-    if (e.key !== 'Escape') return;
-    if (nav.classList.contains('is-open')) { setMenu(false); menuBtn.focus(); }
+    if (!nav.classList.contains('is-open')) return;
+    if (e.key === 'Escape') { setMenu(false); menuBtn.focus(); return; }
+    if (e.key === 'Tab') {
+      // Mantiene el foco dentro del menú abierto
+      const f = focusables();
+      const i = f.indexOf(document.activeElement as HTMLElement);
+      if (e.shiftKey && i <= 0) { e.preventDefault(); f[f.length - 1].focus(); }
+      else if (!e.shiftKey && i === f.length - 1) { e.preventDefault(); f[0].focus(); }
+    }
   });
   window.matchMedia('(min-width: 1141px)').addEventListener('change', (m) => { if (m.matches) setMenu(false); });
 
@@ -136,9 +170,11 @@ const links = [
   syncLabel();
   themeBtn.addEventListener('click', () => {
     const next = root.dataset.themeResolved === 'dark' ? 'light' : 'dark';
+    root.classList.add('theme-anim');
     root.dataset.theme = next;
     root.dataset.themeResolved = next;
     try { localStorage.setItem('theme', next); } catch {}
     syncLabel();
+    setTimeout(() => root.classList.remove('theme-anim'), 400);
   });
 </script>
